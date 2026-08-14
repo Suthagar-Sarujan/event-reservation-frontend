@@ -1,0 +1,122 @@
+@if (loading()) {
+  <div class="container">
+    <div class="skeleton skeleton-line" style="width: 30%; height: 1rem; margin-top: 2rem"></div>
+    <div class="skeleton skeleton-line" style="width: 60%; height: 2.2rem; margin-top: 0.6rem"></div>
+    <div class="skeleton skeleton-line" style="width: 40%"></div>
+    <div class="skeleton skeleton-card" style="height: 220px; margin-top: 1.5rem"></div>
+  </div>
+} @else if (event(); as e) {
+  <section class="event-hero" [style.background-image]="heroBackgroundImage()">
+    <div class="container">
+      <a class="back-link" routerLink="/"><app-icon name="arrow-left" /> Back to browse</a>
+      <span class="badge hero-badge">{{ e.type?.toUpperCase() || e.taxonomySubName }}</span>
+      <h1>{{ e.name }}</h1>
+
+      <div class="meta-grid">
+        <div class="meta-item">
+          <app-icon name="calendar" />
+          {{ e.datetimeUtc | date: 'EEEE, MMMM d, y · h:mm a' }}
+        </div>
+        <div class="meta-item">
+          <app-icon name="map-pin" />
+          {{ e.venueName }}<ng-container *ngIf="e.venueAddress">, {{ e.venueAddress }}</ng-container>,
+          {{ e.venueCity }} {{ e.venueState }} {{ e.venueCountry }}
+          <ng-container *ngIf="e.venueCapacity">&middot; Capacity {{ e.venueCapacity | number }}</ng-container>
+        </div>
+        @if (e.performers.length) {
+          <div class="meta-item">
+            <app-icon name="users" />
+            {{ e.performers.join(', ') }}
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  @if (confirmation(); as c) {
+    <section class="container">
+      <div class="alert alert-success">
+        <app-icon name="check" />
+        <span>
+          Booking confirmed! Reference <strong>{{ c.reference }}</strong> - total ${{ c.total | number: '1.2-2' }}.
+          <a routerLink="/my-bookings">View my bookings &rarr;</a>
+        </span>
+      </div>
+    </section>
+  }
+
+  <section class="container">
+    <div class="section-title">
+      <h2>Available tickets</h2>
+      @if (e.listings.length) {
+        <p>{{ e.listings.length }} listing(s)</p>
+      }
+    </div>
+
+    @if (bookingError()) {
+      <p class="error-text"><app-icon name="alert-triangle" />{{ bookingError() }}</p>
+    }
+
+    @if (e.listings.length === 0) {
+      <app-empty-state icon="ticket" title="No tickets listed yet" description="Check back soon - this event doesn't have any ticket listings available right now." />
+    } @else {
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Section</th>
+              <th>Row</th>
+              <th>Delivery</th>
+              <th>Available</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of e.listings; track l.listingId) {
+              <tr>
+                <td class="section-cell">{{ l.sectionFull || l.section || '-' }}</td>
+                <td>{{ l.rowLabel || '-' }}</td>
+                <td>{{ l.deliveryType || '-' }}</td>
+                <td>{{ l.quantityRemaining }}</td>
+                <td class="price-cell">${{ l.unitPrice | number: '1.2-2' }}</td>
+                <td>
+                  <input
+                    type="number"
+                    min="1"
+                    [max]="l.quantityRemaining"
+                    [(ngModel)]="quantities[l.listingId]"
+                    class="cell-input"
+                  />
+                </td>
+                <td>
+                  <button class="btn btn-sm" (click)="book(l.listingId)" [disabled]="bookingListingId() === l.listingId">
+                    @if (bookingListingId() === l.listingId) {
+                      <span class="spinner"></span> Booking...
+                    } @else {
+                      Book
+                    }
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  @if (similar().length) {
+    <section class="container">
+      <div class="section-title">
+        <h2>Similar events</h2>
+      </div>
+      <div class="card-grid">
+        @for (rec of similar(); track rec.event.eventId) {
+          <app-event-card [event]="rec.event" [reason]="rec.reason" />
+        }
+      </div>
+    </section>
+  }
+}

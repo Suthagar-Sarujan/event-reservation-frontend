@@ -1,0 +1,134 @@
+<a class="back-link" routerLink="/organizer"><app-icon name="arrow-left" /> Back to my events</a>
+
+<div class="page-header">
+  <div>
+    <h1>Create a new event</h1>
+    <p>Add a venue, category, and ticket listings to start selling.</p>
+  </div>
+</div>
+
+<form class="card form-card" (ngSubmit)="submit()" #form="ngForm">
+  <div class="form-section">
+    <h3><app-icon name="party-popper" /> Event details</h3>
+
+    <div class="form-field">
+      <label for="name">Event name</label>
+      <input id="name" name="name" type="text" placeholder="e.g. Downtown Jazz Night" [(ngModel)]="name" required />
+    </div>
+
+    <div class="grid-2">
+      <div class="form-field">
+        <label for="taxonomyName">Category</label>
+        <select id="taxonomyName" name="taxonomyName" [(ngModel)]="taxonomyName">
+          <option value="concerts">Concerts</option>
+          <option value="theater">Theater</option>
+          <option value="community">Community</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="taxonomySubName">Subcategory / genre</label>
+        <input id="taxonomySubName" name="taxonomySubName" type="text" placeholder="e.g. jazz, stand-up comedy" [(ngModel)]="taxonomySubName" required />
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-field">
+        <label for="performerName">Performer / act (optional)</label>
+        <input id="performerName" name="performerName" type="text" [(ngModel)]="performerName" />
+      </div>
+      <div class="form-field">
+        <label for="datetime">Date &amp; time</label>
+        <input id="datetime" name="datetime" type="datetime-local" [(ngModel)]="datetimeLocal" required />
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h3><app-icon name="party-popper" /> Event photo (optional)</h3>
+    <div class="form-field">
+      <label for="imageUrl">Image URL</label>
+      <input id="imageUrl" name="imageUrl" type="url" placeholder="https://..." [(ngModel)]="imageUrl" />
+      <span class="field-hint">Only use a photo you own the rights to. Shown as the card background; without one, we'll use a colorful gradient instead.</span>
+    </div>
+    @if (imageUrl.trim()) {
+      <div class="image-preview" [style.background-image]="'url(' + imageUrl.trim() + ')'"></div>
+    }
+  </div>
+
+  <div class="form-section">
+    <h3><app-icon name="map-pin" /> Venue</h3>
+    <div class="venue-toggle">
+      <label [class.selected]="venueMode === 'existing'">
+        <input type="radio" name="venueMode" [(ngModel)]="venueMode" value="existing" /> Use existing venue
+      </label>
+      <label [class.selected]="venueMode === 'new'">
+        <input type="radio" name="venueMode" [(ngModel)]="venueMode" value="new" /> Add a new venue
+      </label>
+    </div>
+
+    @if (venueMode === 'existing') {
+      <div class="form-field">
+        <select name="selectedVenueId" [(ngModel)]="selectedVenueId">
+          @for (v of venues(); track v.venueId) {
+            <option [value]="v.venueId">{{ v.name }}<ng-container *ngIf="v.addressCity">, {{ v.addressCity }} {{ v.addressState }}</ng-container></option>
+          }
+        </select>
+      </div>
+    } @else {
+      <div class="grid-2">
+        <div class="form-field">
+          <label>Venue name</label>
+          <input name="newVenueName" type="text" [(ngModel)]="newVenue.name" />
+        </div>
+        <div class="form-field">
+          <label>Capacity (optional)</label>
+          <input name="newVenueCapacity" type="number" min="0" [(ngModel)]="newVenue.capacity" />
+        </div>
+        <div class="form-field">
+          <label>Street address</label>
+          <input name="newVenueStreet" type="text" [(ngModel)]="newVenue.addressStreet" />
+        </div>
+        <div class="form-field">
+          <label>City</label>
+          <input name="newVenueCity" type="text" [(ngModel)]="newVenue.addressCity" />
+        </div>
+        <div class="form-field">
+          <label>State / province</label>
+          <input name="newVenueState" type="text" [(ngModel)]="newVenue.addressState" />
+        </div>
+        <div class="form-field">
+          <label>Country</label>
+          <input name="newVenueCountry" type="text" [(ngModel)]="newVenue.addressCountry" />
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="form-section">
+    <h3><app-icon name="ticket" /> Ticket listings</h3>
+    @for (l of listings; track $index) {
+      <div class="listing-row">
+        <input type="text" placeholder="Section (e.g. General Admission)" [(ngModel)]="l.section" [name]="'section' + $index" />
+        <input type="number" min="1" placeholder="Quantity" [(ngModel)]="l.quantity" [name]="'quantity' + $index" />
+        <input type="number" min="0" step="0.01" placeholder="Price ($)" [(ngModel)]="l.unitPrice" [name]="'price' + $index" />
+        <button type="button" class="btn-icon btn btn-ghost" (click)="removeListingRow($index)" [disabled]="listings.length === 1" aria-label="Remove listing">
+          <app-icon name="trash" />
+        </button>
+      </div>
+    }
+    <button type="button" class="btn btn-secondary btn-sm" (click)="addListingRow()"><app-icon name="plus" />Add another listing</button>
+  </div>
+
+  @if (error()) {
+    <p class="error-text"><app-icon name="alert-triangle" />{{ error() }}</p>
+  }
+
+  <button class="btn btn-block" type="submit" [disabled]="loading()">
+    @if (loading()) {
+      <span class="spinner"></span> Creating event...
+    } @else {
+      <app-icon name="check" /> Create event
+    }
+  </button>
+</form>

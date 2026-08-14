@@ -1,0 +1,71 @@
+.event-hero {
+  padding: 2.25rem 0 2rem;
+  margin-bottom: 0.5rem;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--color-navy-700);
+  color: #fff;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+}
+
+.back-link:hover {
+  color: #fff;
+}
+
+.hero-badge {
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(6px);
+  color: #fff;
+}
+
+.hero-badge::before {
+  display: none;
+}
+
+.event-hero h1 {
+  margin: 0.6rem 0 0.9rem;
+  font-size: 1.9rem;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.meta-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.meta-item .icon {
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+}
+
+.section-cell {
+  font-weight: 600;
+}
+
+.price-cell {
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}

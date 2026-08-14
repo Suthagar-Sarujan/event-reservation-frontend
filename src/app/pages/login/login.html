@@ -1,0 +1,32 @@
+<app-auth-shell>
+  <form class="auth-card" (ngSubmit)="submit()" #form="ngForm">
+    <div class="auth-card-header">
+      <h1>Welcome back</h1>
+      <p class="subtitle">Log in to book tickets and see recommendations tailored to you.</p>
+    </div>
+
+    <div class="form-field">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="you@example.com" [(ngModel)]="email" required autocomplete="email" />
+    </div>
+
+    <div class="form-field">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" placeholder="••••••••" [(ngModel)]="password" required autocomplete="current-password" />
+    </div>
+
+    @if (error()) {
+      <p class="error-text"><app-icon name="alert-triangle" />{{ error() }}</p>
+    }
+
+    <button class="btn btn-block" type="submit" [disabled]="form.invalid || loading()">
+      @if (loading()) {
+        <span class="spinner"></span> Signing in...
+      } @else {
+        Log in <app-icon name="arrow-right" />
+      }
+    </button>
+
+    <p class="switch-link">No account yet? <a routerLink="/register">Sign up</a></p>
+  </form>
+</app-auth-shell>

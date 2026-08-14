@@ -1,0 +1,143 @@
+@if (loading()) {
+  <div class="skeleton skeleton-line" style="width: 30%"></div>
+  <div class="skeleton skeleton-card" style="height: 180px; margin-top: 1rem"></div>
+} @else if (event(); as e) {
+  <a class="back-link" routerLink="/organizer"><app-icon name="arrow-left" /> Back to my events</a>
+
+  <div class="page-header">
+    <div>
+      <h1>{{ e.name }}</h1>
+      <p><app-icon name="map-pin" style="vertical-align: -2px" />{{ e.venueName }} &middot; {{ e.ticketsSold }} tickets sold &middot; ${{ e.revenue | number: '1.2-2' }} revenue</p>
+    </div>
+    <span class="status" [class.cancelled]="e.status === 'cancelled'">{{ e.status }}</span>
+  </div>
+
+  <div class="two-col">
+    <div class="card panel">
+      <h3><app-icon name="edit" /> Event details</h3>
+      <div class="form-field">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="editName" name="editName" />
+      </div>
+      <div class="form-field">
+        <label>Date &amp; time</label>
+        <input type="datetime-local" [(ngModel)]="editDatetimeLocal" name="editDatetimeLocal" />
+      </div>
+      <div class="form-field">
+        <label>Status</label>
+        <select [(ngModel)]="editStatus" name="editStatus">
+          <option value="normal">Normal</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Image URL (optional)</label>
+        <input type="url" placeholder="https://..." [(ngModel)]="editImageUrl" name="editImageUrl" />
+      </div>
+      @if (editImageUrl.trim()) {
+        <div class="image-preview" [style.background-image]="'url(' + editImageUrl.trim() + ')'"></div>
+      }
+      @if (detailsError()) {
+        <p class="error-text"><app-icon name="alert-triangle" />{{ detailsError() }}</p>
+      }
+      @if (detailsSaved()) {
+        <p class="alert alert-success"><app-icon name="check" />Saved successfully.</p>
+      }
+      <button class="btn" (click)="saveDetails()" [disabled]="savingDetails()">
+        @if (savingDetails()) {
+          <span class="spinner"></span> Saving...
+        } @else {
+          Save changes
+        }
+      </button>
+    </div>
+
+    <div class="card panel">
+      <h3><app-icon name="plus" /> Add a listing</h3>
+      <div class="form-field">
+        <label>Section</label>
+        <input type="text" [(ngModel)]="newListing.section" name="newSection" placeholder="General Admission" />
+      </div>
+      <div class="form-field">
+        <label>Quantity</label>
+        <input type="number" min="1" [(ngModel)]="newListing.quantity" name="newQuantity" />
+      </div>
+      <div class="form-field">
+        <label>Price ($)</label>
+        <input type="number" min="0" step="0.01" [(ngModel)]="newListing.unitPrice" name="newPrice" />
+      </div>
+      @if (addListingError()) {
+        <p class="error-text"><app-icon name="alert-triangle" />{{ addListingError() }}</p>
+      }
+      <button class="btn btn-secondary" (click)="addListing()"><app-icon name="plus" />Add listing</button>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h2>Listings</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Section</th>
+          <th>Total qty</th>
+          <th>Remaining</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (l of e.listings; track l.listingId) {
+          <tr>
+            <td>{{ l.section || '-' }}</td>
+            <td><input type="number" min="0" class="cell-input" [(ngModel)]="listingEdits[l.listingId].quantity" [name]="'qty-' + l.listingId" /></td>
+            <td>{{ l.quantityRemaining }}</td>
+            <td><input type="number" min="0" step="0.01" class="cell-input" [(ngModel)]="listingEdits[l.listingId].unitPrice" [name]="'price-' + l.listingId" /></td>
+            <td><span class="status" [class.cancelled]="l.listingStatus === 'SoldOut'">{{ l.listingStatus }}</span></td>
+            <td>
+              <button class="btn btn-secondary btn-sm" (click)="saveListing(l.listingId)" [disabled]="savingListingId() === l.listingId">
+                {{ savingListingId() === l.listingId ? 'Saving...' : 'Save' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">
+    <h2>Bookings</h2>
+  </div>
+  @if (bookings().length === 0) {
+    <app-empty-state icon="ticket" title="No bookings yet" description="Sales for this event will show up here as customers book tickets." />
+  } @else {
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Buyer</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Booked</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of bookings(); track b.bookingId) {
+            <tr>
+              <td class="ref">{{ b.bookingReference }}</td>
+              <td>{{ b.buyerName }} <span class="muted">({{ b.buyerEmail }})</span></td>
+              <td>{{ b.quantity }}</td>
+              <td class="revenue-cell">${{ b.totalAmount | number: '1.2-2' }}</td>
+              <td><span class="status" [class.cancelled]="b.status === 'Cancelled'">{{ b.status }}</span></td>
+              <td>{{ b.createdAt | date: 'short' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

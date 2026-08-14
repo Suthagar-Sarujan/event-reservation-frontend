@@ -1,0 +1,38 @@
+<app-auth-shell>
+  <form class="auth-card" (ngSubmit)="submit()" #form="ngForm">
+    <div class="auth-card-header">
+      <h1>Create your account</h1>
+      <p class="subtitle">Sign up to book tickets and unlock personalized recommendations.</p>
+    </div>
+
+    <div class="form-field">
+      <label for="fullName">Full name</label>
+      <input id="fullName" name="fullName" type="text" placeholder="Jane Doe" [(ngModel)]="fullName" required minlength="2" autocomplete="name" />
+    </div>
+
+    <div class="form-field">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="you@example.com" [(ngModel)]="email" required autocomplete="email" />
+    </div>
+
+    <div class="form-field">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" placeholder="••••••••" [(ngModel)]="password" required minlength="8" autocomplete="new-password" />
+      <span class="field-hint">At least 8 characters.</span>
+    </div>
+
+    @if (error()) {
+      <p class="error-text"><app-icon name="alert-triangle" />{{ error() }}</p>
+    }
+
+    <button class="btn btn-block" type="submit" [disabled]="form.invalid || loading()">
+      @if (loading()) {
+        <span class="spinner"></span> Creating account...
+      } @else {
+        Sign up <app-icon name="arrow-right" />
+      }
+    </button>
+
+    <p class="switch-link">Already have an account? <a routerLink="/login">Log in</a></p>
+  </form>
+</app-auth-shell>

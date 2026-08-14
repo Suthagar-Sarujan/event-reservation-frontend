@@ -1,0 +1,63 @@
+<div class="page-header">
+  <div>
+    <h1>Users</h1>
+    <p>{{ total() }} registered accounts</p>
+  </div>
+</div>
+
+<div class="inline-form">
+  <div class="search-field">
+    <app-icon name="search" />
+    <input type="search" placeholder="Search by name or email..." [(ngModel)]="search" (keyup.enter)="load()" />
+  </div>
+  <button class="btn btn-secondary" (click)="load()">Search</button>
+</div>
+
+@if (error()) {
+  <p class="error-text"><app-icon name="alert-triangle" />{{ error() }}</p>
+}
+
+@if (loading()) {
+  <app-skeleton-table [rows]="6" />
+} @else if (users().length === 0) {
+  <app-empty-state icon="users" title="No users found" description="Try a different search term." />
+} @else {
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Joined</th>
+          <th>Change role</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of users(); track u.userId) {
+          <tr>
+            <td class="user-name">
+              <span class="avatar-sm">{{ u.fullName[0] }}</span>
+              {{ u.fullName }}
+            </td>
+            <td>{{ u.email }}</td>
+            <td><span class="role-badge">{{ u.role }}</span></td>
+            <td>{{ u.createdAt | date: 'mediumDate' }}</td>
+            <td>
+              <select
+                [ngModel]="u.role.toLowerCase()"
+                (ngModelChange)="changeRole(u, $event)"
+                [disabled]="savingUserId() === u.userId"
+                class="role-select"
+              >
+                <option value="customer">Customer</option>
+                <option value="organizer">Organizer</option>
+                <option value="admin">Admin</option>
+              </select>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

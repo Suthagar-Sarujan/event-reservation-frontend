@@ -1,0 +1,75 @@
+<div class="page-header">
+  <div>
+    <h1>My events</h1>
+    <p>Create and manage the events you're running.</p>
+  </div>
+  <a class="btn" routerLink="/organizer/events/new"><app-icon name="plus" />Create event</a>
+</div>
+
+@if (loading()) {
+  <div class="stat-grid">
+    @for (i of [1, 2, 3]; track i) {
+      <div class="skeleton skeleton-card" style="height: 96px"></div>
+    }
+  </div>
+  <app-skeleton-table [rows]="4" />
+} @else {
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div>
+        <div class="value">{{ events().length }}</div>
+        <div class="label">Total events</div>
+      </div>
+      <span class="stat-icon icon-teal"><app-icon name="calendar" /></span>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="value">{{ totalSold() }}</div>
+        <div class="label">Tickets sold</div>
+      </div>
+      <span class="stat-icon icon-coral"><app-icon name="ticket" /></span>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="value">${{ totalRevenue() | number: '1.2-2' }}</div>
+        <div class="label">Total revenue</div>
+      </div>
+      <span class="stat-icon icon-mustard"><app-icon name="dollar-sign" /></span>
+    </div>
+  </div>
+
+  @if (events().length === 0) {
+    <app-empty-state icon="calendar" title="No events yet" description="Create your first event to start selling tickets.">
+      <a class="btn" routerLink="/organizer/events/new"><app-icon name="plus" />Create event</a>
+    </app-empty-state>
+  } @else {
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Venue</th>
+            <th>Status</th>
+            <th>Sold / Remaining</th>
+            <th>Revenue</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (e of events(); track e.eventId) {
+            <tr>
+              <td class="event-name">{{ e.name }}</td>
+              <td>{{ e.datetimeUtc | date: 'MMM d, y · h:mm a' }}</td>
+              <td>{{ e.venueName }}</td>
+              <td><span class="status" [class.cancelled]="e.status === 'cancelled'">{{ e.status }}</span></td>
+              <td>{{ e.ticketsSold }} / {{ e.ticketsRemaining }}</td>
+              <td class="revenue-cell">${{ e.revenue | number: '1.2-2' }}</td>
+              <td><a class="btn btn-secondary btn-sm" [routerLink]="['/organizer/events', e.eventId]">Manage</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

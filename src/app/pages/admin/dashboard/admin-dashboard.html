@@ -1,0 +1,45 @@
+<div class="page-header">
+  <div>
+    <h1>Overview</h1>
+    <p>Platform-wide stats across users, events, and bookings.</p>
+  </div>
+</div>
+
+@if (stats(); as s) {
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div>
+        <div class="value">{{ s.totalUsers }}</div>
+        <div class="label">{{ s.totalCustomers }} customer &middot; {{ s.totalOrganizers }} organizer &middot; {{ s.totalAdmins }} admin</div>
+      </div>
+      <span class="stat-icon icon-coral"><app-icon name="users" /></span>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="value">{{ s.totalEvents }}</div>
+        <div class="label">{{ s.totalImportedEvents }} SeatGeek &middot; {{ s.totalOrganizerEvents }} organizer-created</div>
+      </div>
+      <span class="stat-icon icon-teal"><app-icon name="calendar" /></span>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="value">{{ s.totalBookings }}</div>
+        <div class="label">Total bookings</div>
+      </div>
+      <span class="stat-icon icon-mustard"><app-icon name="ticket" /></span>
+    </div>
+    <div class="stat-card">
+      <div>
+        <div class="value">${{ s.totalRevenue | number: '1.2-2' }}</div>
+        <div class="label">Total revenue</div>
+      </div>
+      <span class="stat-icon icon-plum"><app-icon name="dollar-sign" /></span>
+    </div>
+  </div>
+} @else {
+  <div class="stat-grid">
+    @for (i of [1, 2, 3, 4]; track i) {
+      <div class="skeleton skeleton-card" style="height: 96px"></div>
+    }
+  </div>
+}

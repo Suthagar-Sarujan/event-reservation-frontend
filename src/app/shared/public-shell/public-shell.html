@@ -1,0 +1,64 @@
+<header class="topnav">
+  <div class="container topnav-inner">
+    <a class="brand" routerLink="/" (click)="closeMobile()">
+      <span class="brand-mark"><app-icon name="ticket" /></span>
+      EventReserve
+    </a>
+
+    <nav class="links">
+      @if (!auth.isStaff()) {
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Browse</a>
+      }
+      @if (auth.isLoggedIn()) {
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/my-bookings" routerLinkActive="active">My Bookings</a>
+        @if (auth.isOrganizer()) {
+          <a routerLink="/organizer" class="pill-link"><app-icon name="briefcase" />Organizer</a>
+        }
+        @if (auth.isAdmin()) {
+          <a routerLink="/admin" class="pill-link"><app-icon name="shield" />Admin</a>
+        }
+        <app-user-menu />
+      } @else {
+        <a routerLink="/login">Log in</a>
+        <a class="btn btn-sm" routerLink="/register">Sign up</a>
+      }
+    </nav>
+
+    <button class="mobile-toggle" (click)="toggleMobile()" aria-label="Toggle menu">
+      <app-icon [name]="mobileOpen() ? 'x' : 'menu'" />
+    </button>
+  </div>
+
+  @if (mobileOpen()) {
+    <div class="mobile-menu">
+      @if (!auth.isStaff()) {
+        <a routerLink="/" (click)="closeMobile()">Browse</a>
+      }
+      @if (auth.isLoggedIn()) {
+        <a routerLink="/dashboard" (click)="closeMobile()">Dashboard</a>
+        <a routerLink="/my-bookings" (click)="closeMobile()">My Bookings</a>
+        @if (auth.isOrganizer()) {
+          <a routerLink="/organizer" (click)="closeMobile()">Organizer Panel</a>
+        }
+        @if (auth.isAdmin()) {
+          <a routerLink="/admin" (click)="closeMobile()">Admin Panel</a>
+        }
+      } @else {
+        <a routerLink="/login" (click)="closeMobile()">Log in</a>
+        <a routerLink="/register" (click)="closeMobile()">Sign up</a>
+      }
+    </div>
+  }
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    Smart Event Ticket Reservation System &middot; content-based recommendations built on the
+    <a href="https://www.kaggle.com/datasets/rebrowser/seatgeek-dataset" target="_blank" rel="noopener">SeatGeek Events &amp; Ticket Listings dataset</a>.
+  </div>
+</footer>

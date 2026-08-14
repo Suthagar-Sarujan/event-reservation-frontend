@@ -1,0 +1,125 @@
+<div class="page-header">
+  <div>
+    <h1>All events</h1>
+    <p>{{ total() }} total &middot; SeatGeek-imported and organizer-created</p>
+  </div>
+</div>
+
+<div class="inline-form">
+  <div class="search-field">
+    <app-icon name="search" />
+    <input type="search" placeholder="Search by event name..." [(ngModel)]="search" (keyup.enter)="load()" />
+  </div>
+  <button class="btn btn-secondary" (click)="load()">Search</button>
+</div>
+
+@if (loading()) {
+  <app-skeleton-table [rows]="6" />
+} @else if (events().length === 0) {
+  <app-empty-state icon="calendar" title="No events found" description="Try a different search term." />
+} @else {
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Venue</th>
+          <th>Source</th>
+          <th>Status</th>
+          <th>Sold</th>
+          <th>Revenue</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (e of events(); track e.eventId) {
+          <tr>
+            <td class="event-name">{{ e.name }}</td>
+            <td>{{ e.datetimeUtc | date: 'MMM d, y' }}</td>
+            <td>{{ e.venueName }}</td>
+            <td>
+              <span class="role-badge">{{ e.source }}</span>
+              @if (e.creatorEmail) {
+                <div class="muted small">{{ e.creatorEmail }}</div>
+              }
+            </td>
+            <td><span class="status" [class.cancelled]="e.status === 'cancelled'">{{ e.status }}</span></td>
+            <td>{{ e.ticketsSold }}</td>
+            <td class="revenue-cell">${{ e.revenue | number: '1.2-2' }}</td>
+            <td class="actions-cell">
+              <button class="btn btn-secondary btn-sm" (click)="startEdit(e)">
+                <app-icon name="edit" />Edit
+              </button>
+              <button
+                class="btn btn-danger btn-sm"
+                (click)="requestCancel(e)"
+                [disabled]="e.status === 'cancelled' || cancellingId() === e.eventId"
+              >
+                {{ cancellingId() === e.eventId ? 'Cancelling...' : 'Cancel' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<app-confirm-dialog
+  [open]="pendingCancel() !== null"
+  title="Cancel this event?"
+  [message]="'This will cancel &quot;' + (pendingCancel()?.name ?? '') + '&quot;. This can\'t be undone from here.'"
+  confirmLabel="Cancel event"
+  cancelLabel="Keep event"
+  [danger]="true"
+  (confirmed)="confirmCancel()"
+  (cancelled)="pendingCancel.set(null)"
+/>
+
+@if (editingEvent(); as ev) {
+  <div class="modal-backdrop" (click)="cancelEdit()">
+    <div class="modal edit-modal" (click)="$event.stopPropagation()">
+      <h3><app-icon name="edit" /> Edit event</h3>
+      <p>Core details only - venue, performers, and any SeatGeek pricing data are left as-is.</p>
+
+      <div class="form-field">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="editName" name="editName" />
+      </div>
+      <div class="form-field">
+        <label>Date &amp; time</label>
+        <input type="datetime-local" [(ngModel)]="editDatetimeLocal" name="editDatetimeLocal" />
+      </div>
+      <div class="form-field">
+        <label>Status</label>
+        <select [(ngModel)]="editStatus" name="editStatus">
+          <option value="normal">Normal</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Image URL (optional)</label>
+        <input type="url" placeholder="https://..." [(ngModel)]="editImageUrl" name="editImageUrl" />
+      </div>
+      @if (editImageUrl.trim()) {
+        <div class="image-preview" [style.background-image]="'url(' + editImageUrl.trim() + ')'"></div>
+      }
+
+      @if (editError()) {
+        <p class="error-text"><app-icon name="alert-triangle" />{{ editError() }}</p>
+      }
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+        <button class="btn" (click)="saveEdit()" [disabled]="savingEdit()">
+          @if (savingEdit()) {
+            <span class="spinner"></span> Saving...
+          } @else {
+            Save changes
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

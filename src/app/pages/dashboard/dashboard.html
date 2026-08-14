@@ -1,0 +1,80 @@
+<section class="container">
+  <div class="page-intro">
+    <div class="welcome-avatar">{{ auth.currentUser()?.fullName?.[0] }}</div>
+    <div>
+      <h1>Welcome back, {{ auth.currentUser()?.fullName }}</h1>
+      <span class="role-badge">{{ auth.currentUser()?.role }} account</span>
+    </div>
+  </div>
+
+  @if (loadingBookings()) {
+    <div class="stat-grid">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton skeleton-card" style="height: 96px"></div>
+      }
+    </div>
+  } @else {
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div>
+          <div class="value">{{ bookings().length }}</div>
+          <div class="label">Total bookings</div>
+        </div>
+        <span class="stat-icon icon-coral"><app-icon name="ticket" /></span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="value">{{ upcomingBookings().length }}</div>
+          <div class="label">Upcoming events</div>
+        </div>
+        <span class="stat-icon icon-teal"><app-icon name="calendar" /></span>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="value">${{ totalSpent() | number: '1.2-2' }}</div>
+          <div class="label">Total spent</div>
+        </div>
+        <span class="stat-icon icon-mustard"><app-icon name="wallet" /></span>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <h2>Upcoming bookings</h2>
+      <a routerLink="/my-bookings">View all bookings <app-icon name="arrow-right" /></a>
+    </div>
+
+    @if (upcomingBookings().length === 0) {
+      <app-empty-state icon="calendar" title="No upcoming bookings" description="You don't have any upcoming events booked yet.">
+        <a class="btn" routerLink="/">Browse events</a>
+      </app-empty-state>
+    } @else {
+      <div class="booking-list">
+        @for (b of upcomingBookings(); track b.bookingId) {
+          <a class="booking-card card card-hover" [routerLink]="['/events', b.eventId]">
+            <div class="booking-top">
+              <span class="ref">{{ b.bookingReference }}</span>
+              <span class="status">{{ b.status }}</span>
+            </div>
+            <h3>{{ b.eventName }}</h3>
+            <p class="meta"><app-icon name="calendar" />{{ b.eventDatetimeUtc | date: 'EEE, MMM d, y · h:mm a' }}</p>
+          </a>
+        }
+      </div>
+    }
+  }
+
+  <div class="section-title">
+    <h2>Recommended for you</h2>
+  </div>
+  @if (loadingRecommended()) {
+    <app-skeleton-cards [count]="3" />
+  } @else if (recommended().length === 0) {
+    <app-empty-state icon="star" title="No recommendations yet" description="Book an event to start getting personalized recommendations." />
+  } @else {
+    <div class="card-grid">
+      @for (rec of recommended(); track rec.event.eventId) {
+        <app-event-card [event]="rec.event" [reason]="rec.reason" />
+      }
+    </div>
+  }
+</section>

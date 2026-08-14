@@ -1,0 +1,43 @@
+<div class="auth-shell">
+  <div class="auth-visual">
+    <a class="brand" routerLink="/">
+      <span class="brand-mark"><app-icon name="ticket" /></span>
+      EventReserve
+    </a>
+
+    <div class="visual-copy">
+      <h1>Every event, matched to you.</h1>
+      <p>Browse live listings, book in seconds, and get recommendations that actually explain themselves.</p>
+
+      <ul class="feature-list">
+        <li>
+          <span class="feature-icon"><app-icon name="bar-chart" /></span>
+          <div>
+            <strong>Content-based recommendations</strong>
+            <span>Every suggestion says exactly why it's there.</span>
+          </div>
+        </li>
+        <li>
+          <span class="feature-icon"><app-icon name="ticket" /></span>
+          <div>
+            <strong>Real-time inventory</strong>
+            <span>Booking is inventory-safe, down to the last seat.</span>
+          </div>
+        </li>
+        <li>
+          <span class="feature-icon"><app-icon name="briefcase" /></span>
+          <div>
+            <strong>Built for organizers too</strong>
+            <span>Create events, manage listings, track sales.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="visual-footer">SeatGeek Events &amp; Ticket Listings dataset</div>
+  </div>
+
+  <div class="auth-form-side">
+    <ng-content></ng-content>
+  </div>
+</div>

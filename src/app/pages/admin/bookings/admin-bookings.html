@@ -1,0 +1,41 @@
+<div class="page-header">
+  <div>
+    <h1>All bookings</h1>
+    <p>{{ total() }} total across the platform</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-skeleton-table [rows]="6" />
+} @else if (bookings().length === 0) {
+  <app-empty-state icon="ticket" title="No bookings yet" description="Bookings will show up here once customers start booking events." />
+} @else {
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Buyer</th>
+          <th>Event</th>
+          <th>Qty</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Booked</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (b of bookings(); track b.bookingId) {
+          <tr>
+            <td class="ref">{{ b.bookingReference }}</td>
+            <td>{{ b.buyerName }}<div class="muted small">{{ b.buyerEmail }}</div></td>
+            <td><a class="event-link" [routerLink]="['/events', b.eventId]">{{ b.eventName }}</a></td>
+            <td>{{ b.quantity }}</td>
+            <td class="revenue-cell">${{ b.totalAmount | number: '1.2-2' }}</td>
+            <td><span class="status" [class.cancelled]="b.status === 'Cancelled'">{{ b.status }}</span></td>
+            <td>{{ b.createdAt | date: 'short' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

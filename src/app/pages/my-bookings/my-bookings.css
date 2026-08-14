@@ -1,0 +1,55 @@
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.booking-card {
+  display: block;
+  padding: 1.1rem 1.25rem;
+}
+
+.booking-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.ref {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'SF Mono', 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.booking-card h3 {
+  margin: 0.15rem 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.booking-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.booking-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.booking-meta .icon {
+  color: var(--text-tertiary);
+}
+
+.meta.small {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 0.5rem;
+}

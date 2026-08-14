@@ -1,0 +1,131 @@
+.topnav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.topnav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--topbar-height);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.brand-mark {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-brand);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  font-size: 0.88rem;
+}
+
+.links > a:not(.btn):not(.pill-link) {
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 0.4rem 0;
+  border-bottom: 2px solid transparent;
+}
+
+.links > a:not(.btn):not(.pill-link):hover {
+  color: var(--text);
+}
+
+.links > a.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.pill-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--primary-tint);
+  color: var(--primary);
+}
+
+.pill-link:hover {
+  background: var(--primary-tint-strong);
+}
+
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0.4rem;
+  color: var(--text);
+  font-size: 1.3rem;
+}
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  padding: 0.5rem 1.5rem 1rem;
+  border-top: 1px solid var(--border);
+  gap: 0.2rem;
+}
+
+.mobile-menu a {
+  padding: 0.7rem 0.4rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.mobile-menu a:last-child {
+  border-bottom: none;
+}
+
+main {
+  min-height: calc(100vh - var(--topbar-height) - 60px);
+}
+
+.site-footer {
+  padding: 1.75rem 0 2.5rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.site-footer a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+@media (max-width: 860px) {
+  .links {
+    display: none;
+  }
+  .mobile-toggle {
+    display: inline-flex;
+  }
+  .mobile-menu {
+    display: flex;
+  }
+}
