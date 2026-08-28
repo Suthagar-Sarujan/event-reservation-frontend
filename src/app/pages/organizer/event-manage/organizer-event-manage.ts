@@ -2,17 +2,16 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { OrganizerService } from '../../../core/services/organizer.service';
-import { OrganizerBooking, OrganizerEventDetail } from '../../../core/models/models';
-import { Icon } from '../../../shared/icon/icon';
-import { EmptyState } from '../../../shared/empty-state/empty-state';
+import { OrganizerService } from '../../../services/organizer.service';
+import { OrganizerBooking, OrganizerEventDetail } from '../../../models/models';
+import { EmptyState } from '../../../components/empty-state/empty-state';
 
 @Component({
   selector: 'app-organizer-event-manage',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, Icon, EmptyState],
+  imports: [CommonModule, FormsModule, RouterLink, EmptyState],
   templateUrl: './organizer-event-manage.html',
-  styleUrl: './organizer-event-manage.css',
+  styleUrl: './organizer-event-manage.scss',
 })
 export class OrganizerEventManage implements OnInit {
   eventId!: number;

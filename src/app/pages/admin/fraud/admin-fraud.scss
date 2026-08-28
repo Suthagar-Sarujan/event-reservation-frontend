@@ -1,0 +1,19 @@
+.event-link {
+  color: var(--primary-text);
+  font-weight: 600;
+}
+
+.event-link:hover {
+  text-decoration: underline;
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.error-banner p-message {
+  flex: 1;
+}

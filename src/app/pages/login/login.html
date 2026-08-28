@@ -5,28 +5,33 @@
       <p class="subtitle">Log in to book tickets and see recommendations tailored to you.</p>
     </div>
 
-    <div class="form-field">
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" placeholder="you@example.com" [(ngModel)]="email" required autocomplete="email" />
-    </div>
+    <p-fluid>
+      <div class="form-field">
+        <label for="email">Email</label>
+        <p-iconfield>
+          <p-inputicon class="pi pi-envelope" />
+          <input pInputText id="email" name="email" type="email" placeholder="you@example.com" [(ngModel)]="email" required
+            autocomplete="email" />
+        </p-iconfield>
+      </div>
 
-    <div class="form-field">
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" placeholder="••••••••" [(ngModel)]="password" required autocomplete="current-password" />
-    </div>
+      <div class="form-field">
+        <label for="password">Password</label>
+        <p-password id="password" name="password" [(ngModel)]="password" [toggleMask]="true" [feedback]="false"
+          placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+    </p-fluid>
 
-    @if (error()) {
-      <p class="error-text"><app-icon name="alert-triangle" />{{ error() }}</p>
+    @if (error(); as errorMessage) {
+      <p-message severity="error" [text]="errorMessage" styleClass="w-full" />
     }
 
-    <button class="btn btn-block" type="submit" [disabled]="form.invalid || loading()">
-      @if (loading()) {
-        <span class="spinner"></span> Signing in...
-      } @else {
-        Log in <app-icon name="arrow-right" />
-      }
-    </button>
+    <p-button type="submit" [label]="loading() ? 'Signing in...' : 'Log in'" [loading]="loading()"
+      [disabled]="form.invalid || loading()" [style]="{ width: '100%' }" icon="pi pi-arrow-right" iconPos="right" />
 
-    <p class="switch-link">No account yet? <a routerLink="/register">Sign up</a></p>
+    <p class="switch-link">
+      No account yet?
+      <a routerLink="/register">Sign up <i class="pi pi-arrow-right"></i></a>
+    </p>
   </form>
 </app-auth-shell>

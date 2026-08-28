@@ -1,0 +1,33 @@
+.trend-chart {
+  padding: 1.25rem 1.4rem;
+}
+
+.trend-chart-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.trend-chart-title {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.trend-chart-latest {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.trend-chart-empty {
+  color: var(--text-tertiary);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.trend-chart-plot {
+  height: 200px;
+}

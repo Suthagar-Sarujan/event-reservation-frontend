@@ -1,0 +1,79 @@
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 1.75rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-card-badge {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-brand);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-bottom: 0.85rem;
+}
+
+.auth-card-header {
+  margin-bottom: 1.25rem;
+}
+
+.auth-card-header h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.45rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.87rem;
+}
+
+.auth-card .form-field {
+  margin-bottom: 0.75rem;
+}
+
+.auth-card .p-message {
+  margin: 0.6rem 0 0.75rem;
+}
+
+.switch-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.switch-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.3rem;
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.switch-link a .pi {
+  font-size: 0.85rem;
+}
+
+.switch-link a:hover {
+  background: var(--surface-hover);
+  border-color: var(--color-warm-400);
+}

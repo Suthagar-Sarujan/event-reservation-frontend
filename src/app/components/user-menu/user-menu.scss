@@ -1,0 +1,44 @@
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: none;
+  border: 1px solid transparent;
+  padding: 0.3rem 0.6rem 0.3rem 0.3rem;
+  border-radius: var(--radius-full);
+  transition: background 0.15s ease;
+}
+
+.trigger:hover {
+  background: var(--surface-hover);
+}
+
+.trigger-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.25;
+}
+
+.trigger-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.trigger-role {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.chevron {
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .trigger-text {
+    display: none;
+  }
+}

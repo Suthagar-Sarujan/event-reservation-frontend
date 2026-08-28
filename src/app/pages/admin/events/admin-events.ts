@@ -1,19 +1,42 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminService } from '../../../core/services/admin.service';
-import { AdminEvent } from '../../../core/models/models';
-import { Icon } from '../../../shared/icon/icon';
-import { EmptyState } from '../../../shared/empty-state/empty-state';
-import { SkeletonTable } from '../../../shared/skeleton/skeleton';
-import { ConfirmDialog } from '../../../shared/confirm-dialog/confirm-dialog';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { MessageModule } from 'primeng/message';
+import { TableModule } from 'primeng/table';
+import { SelectModule } from 'primeng/select';
+import { DialogModule } from 'primeng/dialog';
+import { FluidModule } from 'primeng/fluid';
+import { AdminService } from '../../../services/admin.service';
+import { AdminEvent } from '../../../models/models';
+import { EmptyState } from '../../../components/empty-state/empty-state';
+import { SkeletonTable } from '../../../components/skeleton/skeleton';
+import { ConfirmDialog } from '../../../components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-admin-events',
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon, EmptyState, SkeletonTable, ConfirmDialog],
+  imports: [
+    CommonModule,
+    FormsModule,
+    EmptyState,
+    SkeletonTable,
+    ConfirmDialog,
+    ButtonModule,
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    MessageModule,
+    TableModule,
+    SelectModule,
+    DialogModule,
+    FluidModule,
+  ],
   templateUrl: './admin-events.html',
-  styleUrl: './admin-events.css',
+  styleUrl: './admin-events.scss',
 })
 export class AdminEvents implements OnInit {
   events = signal<AdminEvent[]>([]);
@@ -22,6 +45,37 @@ export class AdminEvents implements OnInit {
   search = '';
   cancellingId = signal<number | null>(null);
   pendingCancel = signal<AdminEvent | null>(null);
+
+  readonly sourceOptions = [
+    { label: 'All', value: '' },
+    { label: 'SeatGeek', value: 'seatgeek' },
+    { label: 'Organizer', value: 'organizer' },
+  ];
+
+  readonly statusOptions = [
+    { label: 'All', value: '' },
+    { label: 'Normal', value: 'normal' },
+    { label: 'Cancelled', value: 'cancelled' },
+  ];
+
+  // Column filters (PrimeNG-style filter row) - scoped to the currently
+  // loaded page, distinct from the name search above which re-queries the
+  // server across every event, not just this page's 50.
+  venueFilter = signal('');
+  sourceFilter = signal<'' | 'seatgeek' | 'organizer'>('');
+  statusFilter = signal<'' | 'normal' | 'cancelled'>('');
+
+  filteredEvents = computed<AdminEvent[]>(() => {
+    const venue = this.venueFilter().trim().toLowerCase();
+    const source = this.sourceFilter();
+    const status = this.statusFilter();
+    return this.events().filter((e) => {
+      if (source && e.source !== source) return false;
+      if (status && e.status !== status) return false;
+      if (venue && !e.venueName.toLowerCase().includes(venue)) return false;
+      return true;
+    });
+  });
 
   editingEvent = signal<AdminEvent | null>(null);
   editName = '';

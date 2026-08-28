@@ -1,6 +1,6 @@
 <section class="hero">
-  <div class="container hero-inner">
-    <span class="eyebrow"><app-icon name="star" /> Content-based recommendations</span>
+  <div class="container">
+    <span class="eyebrow"><i class="pi pi-star"></i> Content-based recommendations</span>
     <h1>Find your next event</h1>
     <p>Browse live listings from the SeatGeek dataset and get recommendations based on what you've booked - every suggestion tells you exactly why it's there.</p>
   </div>
@@ -37,7 +37,7 @@
 
   <div class="filter-bar">
     <div class="search-field">
-      <app-icon name="search" />
+      <i class="pi pi-search"></i>
       <input
         type="search"
         placeholder="Search by event or performer..."
@@ -57,9 +57,9 @@
         <option [value]="c">{{ c }}</option>
       }
     </select>
-    <button class="btn" (click)="applyFilters()"><app-icon name="filter" />Search</button>
+    <button class="btn" (click)="applyFilters()"><i class="pi pi-filter"></i>Search</button>
     @if (hasActiveFilters) {
-      <button class="btn-ghost btn btn-sm" (click)="clearFilters()"><app-icon name="x" />Clear</button>
+      <button class="btn-ghost btn btn-sm" (click)="clearFilters()"><i class="pi pi-times"></i>Clear</button>
     }
   </div>
 
@@ -78,11 +78,11 @@
 
     <div class="pagination">
       <button class="btn-icon btn btn-secondary" (click)="prevPage()" [disabled]="page() <= 1" aria-label="Previous page">
-        <app-icon name="arrow-left" />
+        <i class="pi pi-arrow-left"></i>
       </button>
       <span>Page {{ page() }} of {{ totalPages }}</span>
       <button class="btn-icon btn btn-secondary" (click)="nextPage()" [disabled]="page() >= totalPages" aria-label="Next page">
-        <app-icon name="arrow-right" />
+        <i class="pi pi-arrow-right"></i>
       </button>
     </div>
   }

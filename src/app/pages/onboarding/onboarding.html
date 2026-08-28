@@ -1,0 +1,67 @@
+<div class="onboarding-page">
+  <div class="onboarding-card">
+    <div class="onboarding-header">
+      <span class="onboarding-badge"><i class="pi pi-sparkles"></i></span>
+      <h1>Let's personalize your recommendations</h1>
+      <p class="subtitle">Pick what you're into - we'll use it to surface events you'll actually want, and explain every suggestion. You can change this anytime.</p>
+    </div>
+
+    <section class="question">
+      <h2>What type of events are you interested in?</h2>
+      <p class="hint">Select all that apply.</p>
+      <div class="option-grid">
+        @for (option of eventTypeOptions; track option) {
+          <button type="button" class="option-pill" [class.selected]="eventTypes().includes(option)" (click)="toggleEventType(option)">
+            {{ option }}
+          </button>
+        }
+      </div>
+    </section>
+
+    <section class="question">
+      <h2>What types of music do you enjoy?</h2>
+      <p class="hint">Select all that apply.</p>
+      <div class="option-grid">
+        @for (option of musicGenreOptions; track option) {
+          <button type="button" class="option-pill" [class.selected]="musicGenres().includes(option)" (click)="toggleGenre(option)">
+            {{ option }}
+          </button>
+        }
+      </div>
+    </section>
+
+    <section class="question">
+      <h2>What type of concert atmosphere do you prefer?</h2>
+      <div class="option-grid">
+        @for (option of atmosphereOptions; track option) {
+          <button type="button" class="option-pill" [class.selected]="atmosphere() === option" (click)="selectAtmosphere(option)">
+            {{ option }}
+          </button>
+        }
+      </div>
+    </section>
+
+    <section class="question">
+      <h2>How often do you attend events?</h2>
+      <div class="option-grid">
+        @for (option of frequencyOptions; track option) {
+          <button type="button" class="option-pill" [class.selected]="attendanceFrequency() === option" (click)="selectFrequency(option)">
+            {{ option }}
+          </button>
+        }
+      </div>
+    </section>
+
+    <div class="onboarding-actions">
+      <a class="skip-link" (click)="skip()">Skip for now</a>
+      <p-button
+        [label]="saving() ? 'Saving...' : 'Save my preferences'"
+        [loading]="saving()"
+        [disabled]="!canSubmit || saving()"
+        icon="pi pi-arrow-right"
+        iconPos="right"
+        (onClick)="submit()"
+      />
+    </div>
+  </div>
+</div>

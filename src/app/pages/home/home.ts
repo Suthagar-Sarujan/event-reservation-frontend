@@ -1,20 +1,19 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { EventService } from '../../core/services/event.service';
-import { RecommendationService } from '../../core/services/recommendation.service';
-import { EventFilters, EventSummary, RecommendedEvent } from '../../core/models/models';
-import { EventCard } from '../../shared/event-card/event-card';
-import { Icon } from '../../shared/icon/icon';
-import { EmptyState } from '../../shared/empty-state/empty-state';
-import { SkeletonCards } from '../../shared/skeleton/skeleton';
+import { EventService } from '../../services/event.service';
+import { RecommendationService } from '../../services/recommendation.service';
+import { EventFilters, EventSummary, RecommendedEvent } from '../../models/models';
+import { EventCard } from '../../components/event-card/event-card';
+import { EmptyState } from '../../components/empty-state/empty-state';
+import { SkeletonCards } from '../../components/skeleton/skeleton';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, EventCard, Icon, EmptyState, SkeletonCards],
+  imports: [CommonModule, FormsModule, EventCard, EmptyState, SkeletonCards],
   templateUrl: './home.html',
-  styleUrl: './home.css',
+  styleUrl: './home.scss',
 })
 export class Home implements OnInit {
   recommended = signal<RecommendedEvent[]>([]);

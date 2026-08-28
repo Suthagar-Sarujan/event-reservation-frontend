@@ -1,0 +1,86 @@
+<header class="topnav">
+  <div class="container topnav-inner">
+    <a class="brand" routerLink="/" (click)="closeMobile()">
+      <span class="brand-mark"><i class="pi pi-ticket"></i></span>
+      EventReserve
+    </a>
+
+    <nav class="nav-center">
+      @if (!auth.isStaff()) {
+        <a class="nav-pill" routerLink="/" routerLinkActive="nav-pill-active" [routerLinkActiveOptions]="{ exact: true }">Browse</a>
+      }
+      @if (auth.isLoggedIn() && !auth.isStaff()) {
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/my-bookings" routerLinkActive="active">My Bookings</a>
+      }
+      @if (auth.isOrganizer()) {
+        <a routerLink="/organizer" class="pill-link"><i class="pi pi-briefcase"></i>Organizer</a>
+      }
+      @if (auth.isAdmin()) {
+        <a routerLink="/admin" class="pill-link"><i class="pi pi-shield"></i>Admin</a>
+      }
+    </nav>
+
+    <div class="nav-right">
+      <div class="nav-right-controls">
+        @if (auth.isLoggedIn()) {
+          <app-user-menu />
+        } @else {
+          <a class="nav-pill" routerLink="/login" routerLinkActive="nav-pill-active" [routerLinkActiveOptions]="{ exact: true }">Log in</a>
+          <a class="nav-pill" routerLink="/register" routerLinkActive="nav-pill-active" [routerLinkActiveOptions]="{ exact: true }">Sign up</a>
+        }
+        <app-theme-toggle />
+      </div>
+
+      <p-button
+        type="button"
+        [text]="true"
+        [rounded]="true"
+        [icon]="mobileOpen() ? 'pi pi-times' : 'pi pi-bars'"
+        (click)="toggleMobile()"
+        styleClass="mobile-toggle"
+        ariaLabel="Toggle menu"
+      />
+    </div>
+  </div>
+
+  @if (mobileOpen()) {
+    <div class="mobile-menu">
+      @if (!auth.isStaff()) {
+        <a routerLink="/" routerLinkActive="mobile-active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">Browse</a>
+      }
+      @if (auth.isLoggedIn()) {
+        @if (!auth.isStaff()) {
+          <a routerLink="/dashboard" (click)="closeMobile()">Dashboard</a>
+          <a routerLink="/my-bookings" (click)="closeMobile()">My Bookings</a>
+        }
+        @if (auth.isOrganizer()) {
+          <a routerLink="/organizer" (click)="closeMobile()">Organizer Panel</a>
+        }
+        @if (auth.isAdmin()) {
+          <a routerLink="/admin" (click)="closeMobile()">Admin Panel</a>
+        }
+      } @else {
+        <a routerLink="/login" routerLinkActive="mobile-active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">Log in</a>
+        <a routerLink="/register" routerLinkActive="mobile-active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">Sign up</a>
+      }
+      <div class="mobile-theme-row">
+        <span>Theme</span>
+        <app-theme-toggle />
+      </div>
+    </div>
+  }
+</header>
+
+<main [class.full-screen]="hideFooter()">
+  <router-outlet (activate)="onRouteActivate($event)" />
+</main>
+
+@if (!hideFooter()) {
+  <footer class="site-footer">
+    <div class="container">
+      Smart Event Ticket Reservation System &middot; content-based recommendations built on the
+      <a href="https://www.kaggle.com/datasets/rebrowser/seatgeek-dataset" target="_blank" rel="noopener">SeatGeek Events &amp; Ticket Listings dataset</a>.
+    </div>
+  </footer>
+}

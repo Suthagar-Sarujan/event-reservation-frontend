@@ -6,26 +6,27 @@
     <div class="skeleton skeleton-card" style="height: 220px; margin-top: 1.5rem"></div>
   </div>
 } @else if (event(); as e) {
-  <section class="event-hero" [style.background-image]="heroBackgroundImage()">
+  <section class="event-hero">
+    <div class="photo-layer" [class.visible]="heroPhotoUrl()" [style.background-image]="heroBackground(heroPhotoUrl())"></div>
     <div class="container">
-      <a class="back-link" routerLink="/"><app-icon name="arrow-left" /> Back to browse</a>
+      <a class="back-link" routerLink="/"><i class="pi pi-arrow-left"></i> Back to browse</a>
       <span class="badge hero-badge">{{ e.type?.toUpperCase() || e.taxonomySubName }}</span>
       <h1>{{ e.name }}</h1>
 
       <div class="meta-grid">
         <div class="meta-item">
-          <app-icon name="calendar" />
+          <i class="pi pi-calendar"></i>
           {{ e.datetimeUtc | date: 'EEEE, MMMM d, y · h:mm a' }}
         </div>
         <div class="meta-item">
-          <app-icon name="map-pin" />
+          <i class="pi pi-map-marker"></i>
           {{ e.venueName }}<ng-container *ngIf="e.venueAddress">, {{ e.venueAddress }}</ng-container>,
           {{ e.venueCity }} {{ e.venueState }} {{ e.venueCountry }}
           <ng-container *ngIf="e.venueCapacity">&middot; Capacity {{ e.venueCapacity | number }}</ng-container>
         </div>
         @if (e.performers.length) {
           <div class="meta-item">
-            <app-icon name="users" />
+            <i class="pi pi-users"></i>
             {{ e.performers.join(', ') }}
           </div>
         }
@@ -36,74 +37,84 @@
   @if (confirmation(); as c) {
     <section class="container">
       <div class="alert alert-success">
-        <app-icon name="check" />
+        <i class="pi pi-check"></i>
         <span>
-          Booking confirmed! Reference <strong>{{ c.reference }}</strong> - total ${{ c.total | number: '1.2-2' }}.
+          Booking confirmed! Reference <strong>{{ c.reference }}</strong> - total ${{ c.total | number: '1.2-2' }}
+          @if (c.paymentReference) { (payment {{ c.paymentReference }}) }.
           <a routerLink="/my-bookings">View my bookings &rarr;</a>
         </span>
       </div>
     </section>
   }
 
+  <app-payment-dialog
+    [open]="paymentOpen()"
+    [summary]="paymentSummary()"
+    [processing]="paymentProcessing()"
+    (paid)="onPaid()"
+    (cancelled)="onPaymentCancelled()"
+  />
+
   <section class="container">
     <div class="section-title">
       <h2>Available tickets</h2>
       @if (e.listings.length) {
-        <p>{{ e.listings.length }} listing(s)</p>
+        <p>{{ filteredListings().length }} of {{ e.listings.length }} listing(s)</p>
       }
     </div>
 
     @if (bookingError()) {
-      <p class="error-text"><app-icon name="alert-triangle" />{{ bookingError() }}</p>
+      <p class="error-text"><i class="pi pi-exclamation-triangle"></i>{{ bookingError() }}</p>
     }
 
     @if (e.listings.length === 0) {
       <app-empty-state icon="ticket" title="No tickets listed yet" description="Check back soon - this event doesn't have any ticket listings available right now." />
     } @else {
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Section</th>
-              <th>Row</th>
-              <th>Delivery</th>
-              <th>Available</th>
-              <th>Price</th>
-              <th>Qty</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (l of e.listings; track l.listingId) {
-              <tr>
-                <td class="section-cell">{{ l.sectionFull || l.section || '-' }}</td>
-                <td>{{ l.rowLabel || '-' }}</td>
-                <td>{{ l.deliveryType || '-' }}</td>
-                <td>{{ l.quantityRemaining }}</td>
-                <td class="price-cell">${{ l.unitPrice | number: '1.2-2' }}</td>
-                <td>
-                  <input
-                    type="number"
-                    min="1"
-                    [max]="l.quantityRemaining"
-                    [(ngModel)]="quantities[l.listingId]"
-                    class="cell-input"
-                  />
-                </td>
-                <td>
-                  <button class="btn btn-sm" (click)="book(l.listingId)" [disabled]="bookingListingId() === l.listingId">
-                    @if (bookingListingId() === l.listingId) {
-                      <span class="spinner"></span> Booking...
-                    } @else {
-                      Book
-                    }
-                  </button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+      <div class="inline-form">
+        <p-iconfield>
+          <p-inputicon class="pi pi-search" />
+          <input pInputText type="search" placeholder="Search by section or row..." [ngModel]="listingSearch()" (ngModelChange)="listingSearch.set($event)" />
+        </p-iconfield>
+        @if (deliveryTypes().length > 1) {
+          <p-select [ngModel]="deliveryFilter()" (ngModelChange)="deliveryFilter.set($event)" [options]="deliveryOptions()" optionLabel="label" optionValue="value" />
+        }
       </div>
+
+      <p-table [value]="filteredListings()" dataKey="listingId" [rowHover]="true" styleClass="p-datatable-app">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Section</th>
+            <th>Row</th>
+            <th>Delivery</th>
+            <th>Available</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7">
+              <app-empty-state icon="search" title="No listings match your filters" description="Try a different search term or clear the delivery filter." />
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-l>
+          <tr>
+            <td class="section-cell">{{ l.sectionFull || l.section || '-' }}</td>
+            <td>{{ l.rowLabel || '-' }}</td>
+            <td>{{ l.deliveryType || '-' }}</td>
+            <td>{{ l.quantityRemaining }}</td>
+            <td class="price-cell">${{ l.unitPrice | number: '1.2-2' }}</td>
+            <td>
+              <p-inputnumber [min]="1" [max]="l.quantityRemaining" [(ngModel)]="quantities[l.listingId]" styleClass="cell-input" [showButtons]="false" />
+            </td>
+            <td>
+              <p-button [label]="bookingListingId() === l.listingId ? 'Booking...' : 'Book'" size="small" [loading]="bookingListingId() === l.listingId" (click)="book(l.listingId)" [disabled]="bookingListingId() === l.listingId" />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     }
   </section>
 

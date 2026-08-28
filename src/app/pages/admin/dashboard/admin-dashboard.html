@@ -12,28 +12,48 @@
         <div class="value">{{ s.totalUsers }}</div>
         <div class="label">{{ s.totalCustomers }} customer &middot; {{ s.totalOrganizers }} organizer &middot; {{ s.totalAdmins }} admin</div>
       </div>
-      <span class="stat-icon icon-coral"><app-icon name="users" /></span>
+      <span class="stat-icon icon-coral"><i class="pi pi-users"></i></span>
     </div>
     <div class="stat-card">
       <div>
         <div class="value">{{ s.totalEvents }}</div>
         <div class="label">{{ s.totalImportedEvents }} SeatGeek &middot; {{ s.totalOrganizerEvents }} organizer-created</div>
       </div>
-      <span class="stat-icon icon-teal"><app-icon name="calendar" /></span>
+      <span class="stat-icon icon-teal"><i class="pi pi-calendar"></i></span>
     </div>
     <div class="stat-card">
       <div>
         <div class="value">{{ s.totalBookings }}</div>
         <div class="label">Total bookings</div>
       </div>
-      <span class="stat-icon icon-mustard"><app-icon name="ticket" /></span>
+      <span class="stat-icon icon-mustard"><i class="pi pi-ticket"></i></span>
     </div>
     <div class="stat-card">
       <div>
         <div class="value">${{ s.totalRevenue | number: '1.2-2' }}</div>
         <div class="label">Total revenue</div>
       </div>
-      <span class="stat-icon icon-plum"><app-icon name="dollar-sign" /></span>
+      <span class="stat-icon icon-plum"><i class="pi pi-dollar"></i></span>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <app-area-chart title="Platform revenue (last 30 days)" valuePrefix="$" [data]="revenueTrend()" />
+    <div class="card chart-card">
+      <h3 class="chart-card-title">Catalog from organizers</h3>
+      <p-progressbar [value]="organizerCatalogPercent()" />
+      <p class="chart-card-subtext">{{ s.totalOrganizerEvents | number }} of {{ s.totalEvents | number }} events</p>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="card chart-card">
+      <h3 class="chart-card-title">Users by role</h3>
+      <p-meterGroup [value]="usersByRole()" />
+    </div>
+    <div class="card chart-card">
+      <h3 class="chart-card-title">Events by source</h3>
+      <p-meterGroup [value]="eventsBySource()" />
     </div>
   </div>
 } @else {

@@ -1,8 +1,12 @@
-<section class="container">
+<section>
   <div class="section-title">
     <h1>My bookings</h1>
     <p>{{ bookings().length }} total</p>
   </div>
+
+  @if (cancelError(); as err) {
+    <p class="error-text"><i class="pi pi-exclamation-triangle"></i>{{ err }}</p>
+  }
 
   @if (loading()) {
     <div class="booking-list">
@@ -12,19 +16,30 @@
     </div>
   } @else if (bookings().length === 0) {
     <app-empty-state icon="ticket" title="No bookings yet" description="You haven't booked any events yet. Browse events to get started.">
-      <a class="btn" routerLink="/">Browse events</a>
+      <a pButton label="Browse events" routerLink="/"></a>
     </app-empty-state>
   } @else {
+    <div class="inline-form">
+      <p-iconfield>
+        <p-inputicon class="pi pi-search" />
+        <input pInputText type="search" placeholder="Search by event or reference..." [ngModel]="search()" (ngModelChange)="search.set($event)" />
+      </p-iconfield>
+      <p-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" [options]="statusOptions" optionLabel="label" optionValue="value" />
+    </div>
+
+    @if (filteredBookings().length === 0) {
+      <app-empty-state icon="search" title="No bookings match your filters" description="Try a different search term or clear the status filter." />
+    } @else {
     <div class="booking-list">
-      @for (b of bookings(); track b.bookingId) {
-        <a class="booking-card card card-hover" [routerLink]="['/events', b.eventId]">
+      @for (b of filteredBookings(); track b.bookingId) {
+        <div class="booking-card card card-hover">
           <div class="booking-top">
-            <span class="ref"><app-icon name="ticket" />{{ b.bookingReference }}</span>
+            <span class="ref"><i class="pi pi-ticket"></i>{{ b.bookingReference }}</span>
             <span class="status" [class.cancelled]="b.status === 'Cancelled'">{{ b.status }}</span>
           </div>
-          <h3>{{ b.eventName }}</h3>
+          <a class="booking-title-link" [routerLink]="['/events', b.eventId]"><h3>{{ b.eventName }}</h3></a>
           <div class="booking-meta">
-            <span><app-icon name="calendar" />{{ b.eventDatetimeUtc | date: 'EEE, MMM d, y · h:mm a' }}</span>
+            <span><i class="pi pi-calendar"></i>{{ b.eventDatetimeUtc | date: 'EEE, MMM d, y · h:mm a' }}</span>
             <span>
               @for (item of b.items; track item.listingId) {
                 {{ item.quantity }} ticket(s) &middot;
@@ -33,8 +48,36 @@
             </span>
           </div>
           <p class="meta small">Booked {{ b.createdAt | date: 'medium' }}</p>
-        </a>
+
+          <div class="booking-actions">
+            <a pButton size="small" severity="secondary" icon="pi pi-qrcode" label="View ticket" [routerLink]="['/bookings', b.bookingId, 'ticket']"></a>
+            @if (canCancel(b)) {
+              <p-button
+                size="small"
+                severity="danger"
+                [text]="true"
+                icon="pi pi-times"
+                [label]="cancellingId() === b.bookingId ? 'Cancelling...' : 'Cancel'"
+                [loading]="cancellingId() === b.bookingId"
+                [disabled]="cancellingId() === b.bookingId"
+                (click)="requestCancel(b)"
+              />
+            }
+          </div>
+        </div>
       }
     </div>
+    }
   }
 </section>
+
+<app-confirm-dialog
+  [open]="!!bookingPendingCancel()"
+  title="Cancel this booking?"
+  [message]="'This will cancel your booking for ' + (bookingPendingCancel()?.eventName ?? '') + ' and release the tickets back to sale. This cannot be undone.'"
+  confirmLabel="Cancel booking"
+  cancelLabel="Keep booking"
+  [danger]="true"
+  (confirmed)="confirmCancel()"
+  (cancelled)="bookingPendingCancel.set(null)"
+/>

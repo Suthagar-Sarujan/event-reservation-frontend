@@ -2,16 +2,35 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
-import { AuthShell } from '../../shared/auth-shell/auth-shell';
-import { Icon } from '../../shared/icon/icon';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { MessageModule } from 'primeng/message';
+import { FluidModule } from 'primeng/fluid';
+import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../services/theme.service';
+import { AuthShell } from '../../components/auth-shell/auth-shell';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AuthShell, Icon],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    AuthShell,
+    ButtonModule,
+    InputTextModule,
+    PasswordModule,
+    IconFieldModule,
+    InputIconModule,
+    MessageModule,
+    FluidModule,
+  ],
   templateUrl: './register.html',
-  styleUrl: '../auth-form.css',
+  styleUrl: '../auth-form.scss',
 })
 export class Register {
   fullName = '';
@@ -22,6 +41,7 @@ export class Register {
 
   constructor(
     private auth: AuthService,
+    private theme: ThemeService,
     private router: Router,
   ) {}
 
@@ -31,7 +51,14 @@ export class Register {
     this.auth.register(this.fullName, this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/dashboard']);
+        // Brand-new account has no saved preference yet - carry over whatever
+        // theme they'd already picked as an anonymous visitor instead of
+        // resetting them to the server's just-created default.
+        this.theme.setPreference(this.theme.preference());
+        // Every new customer account has no interest profile yet - the
+        // onboarding questionnaire seeds their initial recommendation profile
+        // before they see their dashboard.
+        this.router.navigate(['/onboarding']);
       },
       error: (err) => {
         this.loading.set(false);

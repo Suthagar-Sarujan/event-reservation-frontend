@@ -1,0 +1,17 @@
+<button class="trigger" type="button" (click)="menu.toggle($event)" aria-haspopup="true">
+  <p-avatar [label]="initials()" shape="circle" styleClass="user-avatar" />
+  <span class="trigger-text">
+    <span class="trigger-name">{{ auth.currentUser()?.fullName }}</span>
+    <span class="trigger-role">{{ auth.currentUser()?.role }}</span>
+  </span>
+  <i class="pi pi-chevron-down chevron"></i>
+</button>
+
+<p-menu #menu [model]="items()" [popup]="true" appendTo="body">
+  <ng-template #start>
+    <div class="menu-header">
+      <div class="name">{{ auth.currentUser()?.fullName }}</div>
+      <div class="email">{{ auth.currentUser()?.email }}</div>
+    </div>
+  </ng-template>
+</p-menu>

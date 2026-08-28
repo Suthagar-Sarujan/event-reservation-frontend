@@ -3,7 +3,7 @@
     <h1>My events</h1>
     <p>Create and manage the events you're running.</p>
   </div>
-  <a class="btn" routerLink="/organizer/events/new"><app-icon name="plus" />Create event</a>
+  <a pButton icon="pi pi-plus" label="Create event" routerLink="/organizer/events/new"></a>
 </div>
 
 @if (loading()) {
@@ -20,56 +20,135 @@
         <div class="value">{{ events().length }}</div>
         <div class="label">Total events</div>
       </div>
-      <span class="stat-icon icon-teal"><app-icon name="calendar" /></span>
+      <span class="stat-icon icon-teal"><i class="pi pi-calendar"></i></span>
     </div>
     <div class="stat-card">
       <div>
         <div class="value">{{ totalSold() }}</div>
         <div class="label">Tickets sold</div>
       </div>
-      <span class="stat-icon icon-coral"><app-icon name="ticket" /></span>
+      <span class="stat-icon icon-coral"><i class="pi pi-ticket"></i></span>
     </div>
     <div class="stat-card">
       <div>
         <div class="value">${{ totalRevenue() | number: '1.2-2' }}</div>
         <div class="label">Total revenue</div>
       </div>
-      <span class="stat-icon icon-mustard"><app-icon name="dollar-sign" /></span>
+      <span class="stat-icon icon-mustard"><i class="pi pi-dollar"></i></span>
     </div>
   </div>
 
   @if (events().length === 0) {
     <app-empty-state icon="calendar" title="No events yet" description="Create your first event to start selling tickets.">
-      <a class="btn" routerLink="/organizer/events/new"><app-icon name="plus" />Create event</a>
+      <a pButton icon="pi pi-plus" label="Create event" routerLink="/organizer/events/new"></a>
     </app-empty-state>
   } @else {
-    <div class="table-responsive">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Event</th>
-            <th>Date</th>
-            <th>Venue</th>
-            <th>Status</th>
-            <th>Sold / Remaining</th>
-            <th>Revenue</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (e of events(); track e.eventId) {
-            <tr>
-              <td class="event-name">{{ e.name }}</td>
-              <td>{{ e.datetimeUtc | date: 'MMM d, y · h:mm a' }}</td>
-              <td>{{ e.venueName }}</td>
-              <td><span class="status" [class.cancelled]="e.status === 'cancelled'">{{ e.status }}</span></td>
-              <td>{{ e.ticketsSold }} / {{ e.ticketsRemaining }}</td>
-              <td class="revenue-cell">${{ e.revenue | number: '1.2-2' }}</td>
-              <td><a class="btn btn-secondary btn-sm" [routerLink]="['/organizer/events', e.eventId]">Manage</a></td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="chart-grid">
+      <app-area-chart title="Sales revenue (last 30 days)" valuePrefix="$" [data]="revenueTrend()" />
+      <div class="card chart-card">
+        <h3 class="chart-card-title">Sell-through rate</h3>
+        <p-progressbar [value]="sellThroughPercent()" />
+        <p class="chart-card-subtext">{{ totalSold() | number }} of {{ totalCapacity() | number }} tickets sold</p>
+      </div>
     </div>
+
+    <div class="chart-grid">
+      <app-bar-chart title="Revenue by event" [data]="revenueByEvent()" />
+      <app-bar-chart title="Tickets sold by event" [data]="ticketsSoldByEvent()" />
+    </div>
+
+    <div class="section-header">
+      <div>
+        <h2>Demand prediction</h2>
+        <p class="section-subtext">
+          Expected ticket demand for your upcoming events, forecast from capacity, pricing, popularity and booking activity so far.
+          @if (demandModelInfo(); as info) {
+            <span class="model-info-tag">
+              {{ info.mode === 'ml' ? 'Learned model' : 'Heuristic model' }} · trained on {{ info.trainingRowCount }} event{{ info.trainingRowCount === 1 ? '' : 's' }}
+              @if (info.mae !== null) { · avg. error {{ info.mae | number: '1.0-0' }} tickets }
+            </span>
+          }
+        </p>
+      </div>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-refresh"
+        [label]="retraining() ? 'Retraining...' : 'Retrain model'"
+        severity="secondary"
+        [disabled]="retraining()"
+        (click)="retrainDemandModel()"
+      ></button>
+    </div>
+
+    @if (demandLoading()) {
+      <app-skeleton-table [rows]="3" />
+    } @else if (demandPredictions().length === 0) {
+      <app-empty-state icon="chart-bar" title="No demand data yet" description="Predictions will appear once your events have capacity and listings." />
+    } @else {
+      <div class="chart-grid">
+        <app-bar-chart title="Predicted demand by event" [data]="predictedDemandByEvent()" />
+        <div class="card chart-card">
+          <h3 class="chart-card-title">Upcoming events demand</h3>
+          <div class="demand-rows">
+            @for (p of demandPredictions(); track p.eventId) {
+              <div class="demand-row">
+                <div class="demand-row-top">
+                  <span class="demand-row-name">{{ p.eventName }}</span>
+                  <span [class]="demandBadgeClass(p.demandLevel)">{{ p.demandLevel }}</span>
+                </div>
+                <p-progressbar [value]="p.expectedOccupancy * 100" [showValue]="false" />
+                <div class="demand-row-stats">
+                  <span>{{ p.currentBookings | number }} booked</span>
+                  <span>{{ p.predictedDemand | number }} predicted</span>
+                  <span>{{ p.capacity | number }} capacity</span>
+                  <span>{{ p.expectedOccupancy * 100 | number: '1.0-0' }}% occupancy</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="inline-form">
+      <p-iconfield>
+        <p-inputicon class="pi pi-search" />
+        <input pInputText type="search" placeholder="Search by event or venue..." [ngModel]="search()" (ngModelChange)="search.set($event)" />
+      </p-iconfield>
+      <p-select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" [options]="statusOptions" optionLabel="label" optionValue="value" />
+    </div>
+
+    <p-table [value]="filteredEvents()" dataKey="eventId" [rowHover]="true" styleClass="p-datatable-app">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Venue</th>
+          <th>Status</th>
+          <th>Sold / Remaining</th>
+          <th>Revenue</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7">
+            <app-empty-state icon="search" title="No events match your filters" description="Try a different search term or clear the status filter." />
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-e>
+        <tr>
+          <td class="event-name">{{ e.name }}</td>
+          <td>{{ e.datetimeUtc | date: 'MMM d, y · h:mm a' }}</td>
+          <td>{{ e.venueName }}</td>
+          <td><span class="status" [class.cancelled]="e.status === 'cancelled'">{{ e.status }}</span></td>
+          <td>{{ e.ticketsSold }} / {{ e.ticketsRemaining }}</td>
+          <td class="revenue-cell">${{ e.revenue | number: '1.2-2' }}</td>
+          <td><a pButton label="Manage" size="small" severity="secondary" [routerLink]="['/organizer/events', e.eventId]"></a></td>
+        </tr>
+      </ng-template>
+    </p-table>
   }
 }
