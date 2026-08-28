@@ -1,0 +1,11 @@
+<p-button
+  type="button"
+  [rounded]="true"
+  [text]="true"
+  [icon]="currentIcon()"
+  [attr.aria-label]="'Theme: ' + theme.preference()"
+  aria-haspopup="true"
+  (click)="menu.toggle($event)"
+/>
+
+<p-menu #menu [model]="items()" [popup]="true" appendTo="body" styleClass="theme-menu" />

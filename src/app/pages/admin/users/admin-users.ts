@@ -1,19 +1,37 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminService } from '../../../core/services/admin.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { AdminUser } from '../../../core/models/models';
-import { Icon } from '../../../shared/icon/icon';
-import { EmptyState } from '../../../shared/empty-state/empty-state';
-import { SkeletonTable } from '../../../shared/skeleton/skeleton';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { MessageModule } from 'primeng/message';
+import { TableModule } from 'primeng/table';
+import { SelectModule } from 'primeng/select';
+import { AdminService } from '../../../services/admin.service';
+import { AuthService } from '../../../services/auth.service';
+import { AdminUser } from '../../../models/models';
+import { EmptyState } from '../../../components/empty-state/empty-state';
+import { SkeletonTable } from '../../../components/skeleton/skeleton';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon, EmptyState, SkeletonTable],
+  imports: [
+    CommonModule,
+    FormsModule,
+    EmptyState,
+    SkeletonTable,
+    ButtonModule,
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    MessageModule,
+    TableModule,
+    SelectModule,
+  ],
   templateUrl: './admin-users.html',
-  styleUrl: './admin-users.css',
+  styleUrl: './admin-users.scss',
 })
 export class AdminUsers implements OnInit {
   users = signal<AdminUser[]>([]);
@@ -22,6 +40,12 @@ export class AdminUsers implements OnInit {
   search = '';
   savingUserId = signal<number | null>(null);
   error = signal<string | null>(null);
+
+  readonly roleOptions = [
+    { label: 'Customer', value: 'customer' },
+    { label: 'Organizer', value: 'organizer' },
+    { label: 'Admin', value: 'admin' },
+  ];
 
   constructor(
     private adminService: AdminService,

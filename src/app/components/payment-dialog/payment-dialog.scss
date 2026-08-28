@@ -1,0 +1,49 @@
+.payment-modal {
+  max-width: 440px;
+}
+
+.payment-summary {
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.payment-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.payment-summary-row.total {
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--border);
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.payment-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  color: var(--text-tertiary);
+  margin-bottom: 1.1rem;
+}
+
+.payment-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.payment-row .form-field {
+  flex: 1;
+}
+
+.field-error {
+  color: var(--danger);
+  font-size: 0.76rem;
+}

@@ -1,0 +1,16 @@
+<div class="trend-chart card">
+  <div class="trend-chart-header">
+    <h3 class="trend-chart-title">{{ title() }}</h3>
+    @if (latestValue(); as latest) {
+      <span class="trend-chart-latest">{{ latest }}</span>
+    }
+  </div>
+
+  @if (data().length === 0) {
+    <p class="trend-chart-empty">No data yet.</p>
+  } @else {
+    <div class="trend-chart-plot">
+      <p-chart type="line" [data]="chartData()" [options]="chartOptions()" height="200px" />
+    </div>
+  }
+</div>

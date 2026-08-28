@@ -1,0 +1,62 @@
+<div class="page-header">
+  <div>
+    <h1>Verify ticket</h1>
+    <p>Scan a QR code with any camera app and paste its contents here, or type a booking reference to look it up manually.</p>
+  </div>
+</div>
+
+<div class="card verify-card">
+  <form (ngSubmit)="verify()">
+    <div class="form-field">
+      <label for="code">Ticket code or booking reference</label>
+      <input pInputText id="code" name="code" type="text" placeholder="e.g. BKG-AB12CD34 or a scanned QR value"
+        [(ngModel)]="code" autocomplete="off" />
+    </div>
+    <div class="verify-actions">
+      <p-button type="submit" [label]="checking() ? 'Checking...' : 'Verify'" icon="pi pi-search" [loading]="checking()" [disabled]="checking() || !code.trim()" />
+      @if (result() || error()) {
+        <button type="button" class="btn btn-secondary" (click)="reset()">Clear</button>
+      }
+    </div>
+  </form>
+
+  @if (error(); as err) {
+    <p class="error-text"><i class="pi pi-exclamation-triangle"></i>{{ err }}</p>
+  }
+
+  @if (result(); as r) {
+    <div class="verify-result" [class]="resultClass(r)">
+      <div class="verify-result-header">
+        <i class="pi" [ngClass]="{
+          'pi-check-circle': resultClass(r) === 'result-valid',
+          'pi-exclamation-triangle': resultClass(r) === 'result-warn',
+          'pi-times-circle': resultClass(r) === 'result-invalid'
+        }"></i>
+        <strong>{{ r.message }}</strong>
+      </div>
+
+      @if (r.attendeeName) {
+        <div class="verify-details">
+          <div class="verify-detail-item">
+            <span class="label">Attendee</span>
+            <span class="value">{{ r.attendeeName }} ({{ r.attendeeEmail }})</span>
+          </div>
+          <div class="verify-detail-item">
+            <span class="label">Event</span>
+            <span class="value">{{ r.eventName }}</span>
+          </div>
+          <div class="verify-detail-item">
+            <span class="label">Booking</span>
+            <span class="value">{{ r.bookingReference }} &middot; {{ r.totalQuantity }} ticket(s)</span>
+          </div>
+          @if (!r.signatureValid) {
+            <div class="verify-detail-item">
+              <span class="label">Verification method</span>
+              <span class="value">Manual reference lookup (not scanned from QR)</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

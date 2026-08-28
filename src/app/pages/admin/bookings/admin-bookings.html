@@ -5,37 +5,41 @@
   </div>
 </div>
 
+<div class="inline-form">
+  <p-iconfield>
+    <p-inputicon class="pi pi-search" />
+    <input pInputText type="search" placeholder="Search by reference, buyer, or event..." [(ngModel)]="search" (keyup.enter)="load()" />
+  </p-iconfield>
+  <p-button label="Search" severity="secondary" (click)="load()" />
+</div>
+
 @if (loading()) {
   <app-skeleton-table [rows]="6" />
 } @else if (bookings().length === 0) {
-  <app-empty-state icon="ticket" title="No bookings yet" description="Bookings will show up here once customers start booking events." />
+  <app-empty-state icon="ticket" title="No bookings found" description="Try a different search term." />
 } @else {
-  <div class="table-responsive">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Reference</th>
-          <th>Buyer</th>
-          <th>Event</th>
-          <th>Qty</th>
-          <th>Total</th>
-          <th>Status</th>
-          <th>Booked</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (b of bookings(); track b.bookingId) {
-          <tr>
-            <td class="ref">{{ b.bookingReference }}</td>
-            <td>{{ b.buyerName }}<div class="muted small">{{ b.buyerEmail }}</div></td>
-            <td><a class="event-link" [routerLink]="['/events', b.eventId]">{{ b.eventName }}</a></td>
-            <td>{{ b.quantity }}</td>
-            <td class="revenue-cell">${{ b.totalAmount | number: '1.2-2' }}</td>
-            <td><span class="status" [class.cancelled]="b.status === 'Cancelled'">{{ b.status }}</span></td>
-            <td>{{ b.createdAt | date: 'short' }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+  <p-table [value]="bookings()" dataKey="bookingId" [rowHover]="true" styleClass="p-datatable-app">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Reference</th>
+        <th>Buyer</th>
+        <th>Event</th>
+        <th>Qty</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Booked</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-b>
+      <tr>
+        <td class="ref">{{ b.bookingReference }}</td>
+        <td>{{ b.buyerName }}<div class="muted small">{{ b.buyerEmail }}</div></td>
+        <td><a class="event-link" [routerLink]="['/events', b.eventId]">{{ b.eventName }}</a></td>
+        <td>{{ b.quantity }}</td>
+        <td class="revenue-cell">${{ b.totalAmount | number: '1.2-2' }}</td>
+        <td><span class="status" [class.cancelled]="b.status === 'Cancelled'">{{ b.status }}</span></td>
+        <td>{{ b.createdAt | date: 'short' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
 }

@@ -1,0 +1,24 @@
+<div class="bar-chart card">
+  <h3 class="bar-chart-title">{{ title }}</h3>
+
+  @if (data.length === 0) {
+    <p class="bar-chart-empty">No data yet.</p>
+  } @else {
+    <div class="bar-rows">
+      @for (item of data; track item.label) {
+        <div class="bar-row">
+          <span class="bar-label">
+            @if (item.icon) {
+              <span class="bar-label-icon" [style.color]="item.color ?? 'var(--primary-text)'"><i [class]="'pi ' + item.icon"></i></span>
+            }
+            {{ item.label }}
+          </span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="widthPercent(item.value)" [style.background]="item.color ?? 'var(--primary-text)'"></div>
+          </div>
+          <span class="bar-value">{{ displayValue(item) }}</span>
+        </div>
+      }
+    </div>
+  }
+</div>

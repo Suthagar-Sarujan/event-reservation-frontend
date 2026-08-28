@@ -1,0 +1,69 @@
+.verify-card {
+  max-width: 560px;
+  padding: 1.5rem;
+}
+
+.verify-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.verify-result {
+  margin-top: 1.5rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.verify-result-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.result-valid {
+  background: var(--success-tint);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.result-warn {
+  background: var(--warning-tint);
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.result-invalid {
+  background: var(--danger-tint);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.verify-details {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid currentColor;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.verify-detail-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.verify-detail-item .label {
+  font-weight: 700;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.verify-detail-item .value {
+  text-align: right;
+}

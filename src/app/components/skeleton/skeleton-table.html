@@ -1,0 +1,5 @@
+<div class="table-responsive skeleton-table">
+  @for (i of Array(rows); track $index) {
+    <div class="skeleton skeleton-line" [style.width.%]="90 - $index * 4"></div>
+  }
+</div>

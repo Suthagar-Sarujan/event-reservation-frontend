@@ -5,34 +5,43 @@
       <p class="subtitle">Sign up to book tickets and unlock personalized recommendations.</p>
     </div>
 
-    <div class="form-field">
-      <label for="fullName">Full name</label>
-      <input id="fullName" name="fullName" type="text" placeholder="Jane Doe" [(ngModel)]="fullName" required minlength="2" autocomplete="name" />
-    </div>
+    <p-fluid>
+      <div class="form-field">
+        <label for="fullName">Full name</label>
+        <p-iconfield>
+          <p-inputicon class="pi pi-user" />
+          <input pInputText id="fullName" name="fullName" type="text" placeholder="Jane Doe" [(ngModel)]="fullName" required
+            minlength="2" autocomplete="name" />
+        </p-iconfield>
+      </div>
 
-    <div class="form-field">
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" placeholder="you@example.com" [(ngModel)]="email" required autocomplete="email" />
-    </div>
+      <div class="form-field">
+        <label for="email">Email</label>
+        <p-iconfield>
+          <p-inputicon class="pi pi-envelope" />
+          <input pInputText id="email" name="email" type="email" placeholder="you@example.com" [(ngModel)]="email" required
+            autocomplete="email" />
+        </p-iconfield>
+      </div>
 
-    <div class="form-field">
-      <label for="password">Password</label>
-      <input id="password" name="password" type="password" placeholder="••••••••" [(ngModel)]="password" required minlength="8" autocomplete="new-password" />
-      <span class="field-hint">At least 8 characters.</span>
-    </div>
+      <div class="form-field">
+        <label for="password">Password</label>
+        <p-password id="password" name="password" [(ngModel)]="password" [toggleMask]="true" [feedback]="false"
+          placeholder="••••••••" required [minlength]="8" autocomplete="new-password" />
+        <span class="field-hint">At least 8 characters.</span>
+      </div>
+    </p-fluid>
 
-    @if (error()) {
-      <p class="error-text"><app-icon name="alert-triangle" />{{ error() }}</p>
+    @if (error(); as errorMessage) {
+      <p-message severity="error" [text]="errorMessage" styleClass="w-full" />
     }
 
-    <button class="btn btn-block" type="submit" [disabled]="form.invalid || loading()">
-      @if (loading()) {
-        <span class="spinner"></span> Creating account...
-      } @else {
-        Sign up <app-icon name="arrow-right" />
-      }
-    </button>
+    <p-button type="submit" [label]="loading() ? 'Creating account...' : 'Sign up'" [loading]="loading()"
+      [disabled]="form.invalid || loading()" [style]="{ width: '100%' }" icon="pi pi-arrow-right" iconPos="right" />
 
-    <p class="switch-link">Already have an account? <a routerLink="/login">Log in</a></p>
+    <p class="switch-link">
+      Already have an account?
+      <a routerLink="/login">Log in <i class="pi pi-arrow-right"></i></a>
+    </p>
   </form>
 </app-auth-shell>

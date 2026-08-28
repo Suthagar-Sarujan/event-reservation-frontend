@@ -1,0 +1,41 @@
+<a class="card card-hover event-card" [routerLink]="['/events', event.eventId]">
+  <div
+    class="photo-layer"
+    [class.visible]="photoImageUrl()"
+    [style.background-image]="
+      photoImageUrl() ? 'linear-gradient(180deg, rgba(30,18,10,0.35), rgba(20,12,8,0.82)), url(' + photoImageUrl() + ')' : ''
+    "
+  ></div>
+
+  <div class="card-top">
+    <span class="badge type-badge">
+      <i [class]="'pi ' + categoryIcon()"></i>
+      {{ event.type?.toUpperCase() || event.taxonomySubName }}
+    </span>
+    @if (event.minPrice !== null) {
+      <span class="price">from <strong>${{ event.minPrice | number: '1.0-2' }}</strong></span>
+    }
+  </div>
+
+  <div class="card-spacer"></div>
+
+  <div class="card-bottom">
+    <h3>{{ event.name }}</h3>
+
+    <div class="meta-row">
+      <i class="pi pi-map-marker"></i>
+      <span>{{ event.venueName }}<ng-container *ngIf="event.venueCity">, {{ event.venueCity }} {{ event.venueState }}</ng-container></span>
+    </div>
+    <div class="meta-row">
+      <i class="pi pi-calendar"></i>
+      <span>{{ event.datetimeUtc | date: 'EEE, MMM d, y · h:mm a' }}</span>
+    </div>
+
+    @if (reason) {
+      <div class="reason">
+        <i class="pi pi-star"></i>
+        <span>{{ reason }}</span>
+      </div>
+    }
+  </div>
+</a>

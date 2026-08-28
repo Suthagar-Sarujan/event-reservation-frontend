@@ -1,0 +1,59 @@
+<div class="area-chart card">
+  <div class="area-chart-header">
+    <h3 class="area-chart-title">{{ title }}</h3>
+    @if (data.length > 0) {
+      <span class="area-chart-latest">{{ formatValue(data[data.length - 1].value) }}</span>
+    }
+  </div>
+
+  @if (data.length === 0) {
+    <p class="area-chart-empty">No data yet.</p>
+  } @else {
+    <div class="area-chart-plot">
+      <svg
+        #svgEl
+        class="area-chart-svg"
+        [attr.viewBox]="viewBox"
+        preserveAspectRatio="none"
+        (mousemove)="onMove($event, svgEl)"
+        (mouseleave)="onLeave()"
+      >
+        <defs>
+          <linearGradient id="areaChartFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--primary-text)" stop-opacity="0.18" />
+            <stop offset="100%" stop-color="var(--primary-text)" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+
+        @for (y of gridLines; track y) {
+          <line class="area-chart-grid" [attr.x1]="gridX1" [attr.x2]="gridX2" [attr.y1]="y" [attr.y2]="y" />
+        }
+
+        <path class="area-chart-fill" [attr.d]="areaPath()" fill="url(#areaChartFill)" />
+        <path class="area-chart-line" [attr.d]="linePath()" />
+
+        @if (lastPoint(); as lp) {
+          <circle class="area-chart-end-dot" [attr.cx]="lp.x" [attr.cy]="lp.y" r="4" />
+        }
+
+        @if (hoverPoint(); as hp) {
+          <line class="area-chart-crosshair" [attr.x1]="hp.x" [attr.x2]="hp.x" [attr.y1]="gridLines[0]" [attr.y2]="gridLines[2]" />
+          <circle class="area-chart-hover-dot" [attr.cx]="hp.x" [attr.cy]="hp.y" r="4" />
+        }
+      </svg>
+
+      @if (hoverData(); as hd) {
+        <div class="area-chart-tooltip" [style.left.%]="tooltipLeftPercent()">
+          <div class="area-chart-tooltip-value">{{ formatValue(hd.value) }}</div>
+          <div class="area-chart-tooltip-label">{{ hd.label }}</div>
+        </div>
+      }
+    </div>
+
+    <div class="area-chart-axis">
+      @for (label of axisLabels(); track label) {
+        <span>{{ label }}</span>
+      }
+    </div>
+  }
+</div>

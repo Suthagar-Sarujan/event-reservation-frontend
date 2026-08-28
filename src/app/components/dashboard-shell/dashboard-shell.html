@@ -1,0 +1,49 @@
+<div class="shell">
+  @if (sidebarOpen()) {
+    <div class="sidebar-backdrop" (click)="closeSidebar()"></div>
+  }
+
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+    <a class="sidebar-brand" routerLink="/">
+      <span class="brand-mark"><i class="pi pi-ticket"></i></span>
+      EventReserve
+    </a>
+
+    <div class="sidebar-section-label">{{ sectionLabel }}</div>
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+          (click)="closeSidebar()"
+        >
+          <i [class]="'pi ' + item.icon"></i>
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <!-- <a class="back-to-site" routerLink="/">
+        <i class="pi pi-arrow-left"></i> Back to site
+      </a> -->
+      <p-button type="button" [text]="true" icon="pi pi-sign-out" label="Log out" (click)="logout()" styleClass="sidebar-logout" />
+    </div>
+  </aside>
+
+  <div class="shell-main">
+    <div class="shell-topbar">
+      <p-button type="button" [text]="true" [rounded]="true" icon="pi pi-bars" (click)="toggleSidebar()" styleClass="sidebar-toggle" ariaLabel="Toggle menu" />
+      <span class="topbar-title">{{ topbarTitle }}</span>
+      <div class="topbar-actions">
+        <app-theme-toggle />
+        <app-user-menu />
+      </div>
+    </div>
+
+    <div class="shell-content container">
+      <router-outlet />
+    </div>
+  </div>
+</div>

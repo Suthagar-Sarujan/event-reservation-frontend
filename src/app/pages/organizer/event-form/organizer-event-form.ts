@@ -2,9 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { OrganizerService } from '../../../core/services/organizer.service';
-import { CreateListingRequest, VenueOption } from '../../../core/models/models';
-import { Icon } from '../../../shared/icon/icon';
+import { OrganizerService } from '../../../services/organizer.service';
+import { CreateListingRequest, VenueOption } from '../../../models/models';
 
 interface ListingRow {
   section: string;
@@ -15,9 +14,9 @@ interface ListingRow {
 @Component({
   selector: 'app-organizer-event-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, Icon],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './organizer-event-form.html',
-  styleUrl: './organizer-event-form.css',
+  styleUrl: './organizer-event-form.scss',
 })
 export class OrganizerEventForm implements OnInit {
   venues = signal<VenueOption[]>([]);

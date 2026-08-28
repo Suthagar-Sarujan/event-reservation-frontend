@@ -1,0 +1,78 @@
+<div class="ticket-page">
+  @if (loading()) {
+    <div class="ticket-card">
+      <div class="skeleton skeleton-line" style="width: 50%; height: 1.5rem"></div>
+      <div class="skeleton skeleton-card" style="height: 220px; margin-top: 1rem"></div>
+    </div>
+  } @else if (notFound()) {
+    <app-empty-state icon="ticket" title="Ticket not found" description="This booking doesn't exist or doesn't belong to your account.">
+      <a pButton label="Back to my bookings" routerLink="/my-bookings"></a>
+    </app-empty-state>
+  } @else if (ticket(); as t) {
+    <div class="ticket-actions no-print">
+      <a class="back-link" routerLink="/my-bookings"><i class="pi pi-arrow-left"></i> Back to my bookings</a>
+      <div class="ticket-actions-buttons">
+        <a pButton severity="secondary" icon="pi pi-download" label="Download QR" [href]="t.qrCodeDataUri" [download]="'ticket-' + t.bookingReference + '.png'"></a>
+        <p-button icon="pi pi-print" label="Print ticket" (click)="print()" />
+      </div>
+    </div>
+
+    <div class="ticket-card" [class.cancelled]="t.status === 'Cancelled'">
+      <div class="ticket-header">
+        <div>
+          <span class="ticket-badge" [class.cancelled]="t.status === 'Cancelled'">{{ t.status }}</span>
+          <h1>{{ t.eventName }}</h1>
+          <p class="ticket-meta"><i class="pi pi-calendar"></i>{{ t.eventDatetimeUtc | date: 'EEEE, MMMM d, y · h:mm a' }}</p>
+          <p class="ticket-meta">
+            <i class="pi pi-map-marker"></i>{{ t.venueName }}
+            @if (t.venueCity) {, {{ t.venueCity }} {{ t.venueState }} }
+          </p>
+        </div>
+        <div class="ticket-qr">
+          <img [src]="t.qrCodeDataUri" alt="Ticket QR code" />
+          <span class="ticket-ref">{{ t.bookingReference }}</span>
+        </div>
+      </div>
+
+      <div class="ticket-divider"></div>
+
+      <div class="ticket-details">
+        <div class="ticket-detail-item">
+          <span class="label">Tickets</span>
+          <span class="value">{{ t.totalQuantity }}</span>
+        </div>
+        <div class="ticket-detail-item">
+          <span class="label">Total paid</span>
+          <span class="value">${{ t.totalAmount | number: '1.2-2' }}</span>
+        </div>
+        @if (t.paymentReference) {
+          <div class="ticket-detail-item">
+            <span class="label">Payment ref.</span>
+            <span class="value">{{ t.paymentReference }}</span>
+          </div>
+        }
+        <div class="ticket-detail-item">
+          <span class="label">Checked in</span>
+          <span class="value">{{ t.checkedInAt ? (t.checkedInAt | date: 'medium') : 'Not yet' }}</span>
+        </div>
+      </div>
+
+      @if (t.items.length) {
+        <div class="ticket-divider"></div>
+        <div class="ticket-items">
+          @for (item of t.items; track item.listingId) {
+            <div class="ticket-item-row">
+              <span>{{ item.section || 'General admission' }}</span>
+              <span>{{ item.quantity }} &times; ${{ item.unitPrice | number: '1.2-2' }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <p class="ticket-footer no-print">
+        <i class="pi pi-info-circle"></i>
+        Present this QR code at the venue entrance for scanning.
+      </p>
+    </div>
+  }
+</div>

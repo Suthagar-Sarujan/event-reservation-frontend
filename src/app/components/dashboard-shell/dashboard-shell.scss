@@ -1,0 +1,70 @@
+.brand-mark {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-brand);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.topbar-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.back-to-site {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-sm);
+}
+
+.back-to-site:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.sidebar-logout {
+  width: 100%;
+  margin-top: 0.3rem;
+  justify-content: flex-start;
+  color: var(--text-secondary);
+}
+
+.sidebar-logout:hover {
+  background: var(--danger-tint);
+  color: var(--danger);
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    z-index: 40;
+  }
+
+  .topbar-title {
+    display: none;
+  }
+}

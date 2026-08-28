@@ -1,4 +1,4 @@
-<section class="container">
+<section>
   <div class="page-intro">
     <div class="welcome-avatar">{{ auth.currentUser()?.fullName?.[0] }}</div>
     <div>
@@ -20,32 +20,43 @@
           <div class="value">{{ bookings().length }}</div>
           <div class="label">Total bookings</div>
         </div>
-        <span class="stat-icon icon-coral"><app-icon name="ticket" /></span>
+        <span class="stat-icon icon-coral"><i class="pi pi-ticket"></i></span>
       </div>
       <div class="stat-card">
         <div>
           <div class="value">{{ upcomingBookings().length }}</div>
           <div class="label">Upcoming events</div>
         </div>
-        <span class="stat-icon icon-teal"><app-icon name="calendar" /></span>
+        <span class="stat-icon icon-teal"><i class="pi pi-calendar"></i></span>
       </div>
       <div class="stat-card">
         <div>
           <div class="value">${{ totalSpent() | number: '1.2-2' }}</div>
           <div class="label">Total spent</div>
         </div>
-        <span class="stat-icon icon-mustard"><app-icon name="wallet" /></span>
+        <span class="stat-icon icon-mustard"><i class="pi pi-wallet"></i></span>
       </div>
     </div>
 
+    @if (bookings().length > 0) {
+      <div class="chart-grid">
+        <app-area-chart title="Spend over time (last 30 days)" valuePrefix="$" [data]="spendTrend()" />
+        <div class="card chart-card">
+          <h3 class="chart-card-title">Confirmed rate</h3>
+          <p-progressbar [value]="confirmedPercent()" />
+          <p class="chart-card-subtext">{{ confirmedCount() | number }} of {{ bookings().length | number }} bookings confirmed</p>
+        </div>
+      </div>
+    }
+
     <div class="section-title">
       <h2>Upcoming bookings</h2>
-      <a routerLink="/my-bookings">View all bookings <app-icon name="arrow-right" /></a>
+      <a routerLink="/my-bookings">View all bookings <i class="pi pi-arrow-right"></i></a>
     </div>
 
     @if (upcomingBookings().length === 0) {
       <app-empty-state icon="calendar" title="No upcoming bookings" description="You don't have any upcoming events booked yet.">
-        <a class="btn" routerLink="/">Browse events</a>
+        <a pButton label="Browse events" routerLink="/"></a>
       </app-empty-state>
     } @else {
       <div class="booking-list">
@@ -56,7 +67,7 @@
               <span class="status">{{ b.status }}</span>
             </div>
             <h3>{{ b.eventName }}</h3>
-            <p class="meta"><app-icon name="calendar" />{{ b.eventDatetimeUtc | date: 'EEE, MMM d, y · h:mm a' }}</p>
+            <p class="meta"><i class="pi pi-calendar"></i>{{ b.eventDatetimeUtc | date: 'EEE, MMM d, y · h:mm a' }}</p>
           </a>
         }
       </div>

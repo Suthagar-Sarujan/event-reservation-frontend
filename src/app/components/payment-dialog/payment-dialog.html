@@ -1,0 +1,69 @@
+@if (open) {
+  <div class="modal-backdrop" (click)="close()">
+    <div class="modal payment-modal" (click)="$event.stopPropagation()">
+      <span class="modal-icon"><i class="pi pi-credit-card"></i></span>
+      <h3>Confirm payment</h3>
+
+      @if (summary; as s) {
+        <div class="payment-summary">
+          <div class="payment-summary-row">
+            <span>{{ s.eventName }}</span>
+            <span>{{ s.quantity }} &times; ${{ s.unitPrice | number: '1.2-2' }}</span>
+          </div>
+          <div class="payment-summary-row total">
+            <span>Total</span>
+            <span>${{ s.total | number: '1.2-2' }}</span>
+          </div>
+        </div>
+      }
+
+      <p class="payment-note">
+        <i class="pi pi-lock"></i>
+        Simulated payment for demo purposes - no real card is charged and no card details are sent anywhere.
+      </p>
+
+      <form (ngSubmit)="submit()">
+        <div class="form-field">
+          <label for="cardName">Name on card</label>
+          <input pInputText id="cardName" name="cardName" type="text" placeholder="Jane Doe" [(ngModel)]="cardName" autocomplete="cc-name" />
+          @if (touched() && cardName.trim().length <= 1) {
+            <span class="field-error">Enter the name on the card.</span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="cardNumber">Card number</label>
+          <input pInputText id="cardNumber" name="cardNumber" type="text" inputmode="numeric" placeholder="4242 4242 4242 4242"
+            maxlength="19" [(ngModel)]="cardNumber" (ngModelChange)="formatCardNumber()" autocomplete="cc-number" />
+          @if (touched() && !cardNumberValid) {
+            <span class="field-error">Enter a 16-digit card number.</span>
+          }
+        </div>
+
+        <div class="payment-row">
+          <div class="form-field">
+            <label for="expiry">Expiry</label>
+            <input pInputText id="expiry" name="expiry" type="text" placeholder="MM/YY" maxlength="5"
+              [(ngModel)]="expiry" (ngModelChange)="formatExpiry()" autocomplete="cc-exp" />
+            @if (touched() && !expiryValid) {
+              <span class="field-error">Use MM/YY.</span>
+            }
+          </div>
+          <div class="form-field">
+            <label for="cvv">CVV</label>
+            <input pInputText id="cvv" name="cvv" type="text" inputmode="numeric" placeholder="123" maxlength="4"
+              [(ngModel)]="cvv" autocomplete="cc-csc" />
+            @if (touched() && !cvvValid) {
+              <span class="field-error">3-4 digits.</span>
+            }
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="close()" [disabled]="processing">Cancel</button>
+          <p-button type="submit" [label]="processing ? 'Processing...' : 'Pay now'" [loading]="processing" [disabled]="processing" />
+        </div>
+      </form>
+    </div>
+  </div>
+}
