@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { UserMenu } from '../user-menu/user-menu';
 import { ThemeToggle } from '../theme-toggle/theme-toggle';
 import { Login } from '../../../features/auth/pages/login/login';
@@ -19,7 +20,10 @@ export class PublicShell {
   mobileOpen = signal(false);
   hideFooter = signal(false);
 
-  constructor(protected auth: AuthService) {}
+  constructor(
+    protected auth: AuthService,
+    protected theme: ThemeService,
+  ) {}
 
   toggleMobile(): void {
     this.mobileOpen.update((v) => !v);

@@ -28,16 +28,16 @@
   justify-self: start;
 }
 
-.brand-mark {
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--radius-sm);
-  background: var(--gradient-brand);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
+// The source PNGs are square with the wordmark occupying a wide band
+// vertically centered in the canvas - cover + a wide aspect-ratio box crops
+// away the transparent top/bottom padding without needing a pre-cropped asset.
+.brand-logo {
+  display: block;
+  height: 4rem;
+  width: auto;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
+  object-position: center;
 }
 
 .nav-center {

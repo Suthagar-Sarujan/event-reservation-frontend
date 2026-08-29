@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { UserMenu } from '../user-menu/user-menu';
 import { ThemeToggle } from '../theme-toggle/theme-toggle';
 
@@ -70,6 +71,7 @@ export class DashboardShell {
 
   constructor(
     protected auth: AuthService,
+    protected theme: ThemeService,
     private router: Router,
     route: ActivatedRoute,
   ) {

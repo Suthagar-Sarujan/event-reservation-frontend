@@ -1,15 +1,15 @@
 <div class="gate-shell">
   <header class="gate-topbar">
     <div class="gate-topbar-title">
-      <span class="brand-mark"><i class="pi pi-ticket"></i></span>
-      <div>
-        <div class="gate-app-name">EventReserve</div>
-        @if (gateSession.gateName(); as gateName) {
-          <div class="gate-current">{{ gateName }}</div>
-        }
-      </div>
+      <img [src]="theme.effectiveTheme() === 'dark' ? '/logo-white.png' : '/logo-black.png'" alt="Eventify" class="brand-logo" />
+      @if (gateSession.gateName(); as gateName) {
+        <div class="gate-current">{{ gateName }}</div>
+      }
     </div>
-    <p-button type="button" [text]="true" icon="pi pi-sign-out" (click)="logout()" ariaLabel="Log out" styleClass="gate-logout" />
+    <div class="gate-topbar-actions">
+      <app-theme-toggle />
+      <p-button type="button" [text]="true" icon="pi pi-sign-out" (click)="logout()" ariaLabel="Log out" styleClass="gate-logout" />
+    </div>
   </header>
 
   <main class="gate-content">

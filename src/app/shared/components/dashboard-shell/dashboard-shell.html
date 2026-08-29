@@ -5,8 +5,7 @@
 
   <aside class="sidebar" [class.open]="sidebarOpen()">
     <a class="sidebar-brand" routerLink="/">
-      <span class="brand-mark"><i class="pi pi-ticket"></i></span>
-      EventReserve
+      <img [src]="theme.effectiveTheme() === 'dark' ? '/logo-white.png' : '/logo-black.png'" alt="Eventify" class="brand-logo" />
     </a>
 
     <div class="sidebar-section-label">{{ sectionLabel }}</div>
