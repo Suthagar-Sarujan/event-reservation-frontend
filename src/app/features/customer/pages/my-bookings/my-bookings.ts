@@ -38,6 +38,9 @@ export class MyBookings implements OnInit {
   cancellingId = signal<number | null>(null);
   cancelError = signal<string | null>(null);
   bookingPendingCancel = signal<Booking | null>(null);
+  resendingId = signal<number | null>(null);
+  resendError = signal<string | null>(null);
+  resendSuccessId = signal<number | null>(null);
 
   readonly statusOptions = [
     { label: 'All statuses', value: '' },
@@ -99,6 +102,23 @@ export class MyBookings implements OnInit {
       error: (err) => {
         this.cancellingId.set(null);
         this.cancelError.set(err.error?.message ?? 'Could not cancel this booking. Please try again.');
+      },
+    });
+  }
+
+  resendEmail(booking: Booking): void {
+    this.resendError.set(null);
+    this.resendSuccessId.set(null);
+    this.resendingId.set(booking.bookingId);
+    this.bookingService.resendEmail(booking.bookingId).subscribe({
+      next: () => {
+        this.resendingId.set(null);
+        this.resendSuccessId.set(booking.bookingId);
+        this.load();
+      },
+      error: (err) => {
+        this.resendingId.set(null);
+        this.resendError.set(err.error?.message ?? 'Could not resend the confirmation email. Please try again.');
       },
     });
   }

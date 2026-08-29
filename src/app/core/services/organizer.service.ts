@@ -48,6 +48,10 @@ export class OrganizerService {
     return this.http.get<OrganizerBooking[]>(`${API_BASE_URL}/organizer/events/${eventId}/bookings`);
   }
 
+  resendBookingEmail(bookingId: number): Observable<void> {
+    return this.http.post<void>(`${API_BASE_URL}/organizer/bookings/${bookingId}/resend-email`, {});
+  }
+
   salesTrend(days = 30): Observable<TrendPoint[]> {
     const params = new HttpParams().set('days', days);
     return this.http.get<TrendPoint[]>(`${API_BASE_URL}/organizer/sales-trend`, { params });

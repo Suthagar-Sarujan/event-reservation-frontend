@@ -31,6 +31,8 @@ export class OrganizerEventManage implements OnInit {
   addListingError = signal<string | null>(null);
   listingEdits: Record<string, { quantity: number; unitPrice: number }> = {};
   savingListingId = signal<string | null>(null);
+  resendingId = signal<number | null>(null);
+  resendError = signal<string | null>(null);
 
   constructor(
     private route: ActivatedRoute,
@@ -106,6 +108,21 @@ export class OrganizerEventManage implements OnInit {
         this.load();
       },
       error: () => this.savingListingId.set(null),
+    });
+  }
+
+  resendEmail(booking: OrganizerBooking): void {
+    this.resendError.set(null);
+    this.resendingId.set(booking.bookingId);
+    this.organizerService.resendBookingEmail(booking.bookingId).subscribe({
+      next: () => {
+        this.resendingId.set(null);
+        this.organizerService.eventBookings(this.eventId).subscribe((b) => this.bookings.set(b));
+      },
+      error: (err) => {
+        this.resendingId.set(null);
+        this.resendError.set(err.error?.message ?? 'Could not resend the confirmation email. Please try again.');
+      },
     });
   }
 }
