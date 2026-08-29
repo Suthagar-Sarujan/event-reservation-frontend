@@ -65,6 +65,10 @@ export class AuthService {
     return this.http.post<void>(`${API_BASE_URL}/auth/reset-password`, { token, newPassword });
   }
 
+  validateResetToken(token: string): Observable<void> {
+    return this.http.get<void>(`${API_BASE_URL}/auth/validate-reset-token`, { params: { token } });
+  }
+
   get token(): string | null {
     return this.authState()?.token ?? null;
   }
