@@ -13,6 +13,10 @@
   <p-button label="Search" severity="secondary" (click)="load()" />
 </div>
 
+@if (resendError(); as err) {
+  <p-message severity="error" [text]="err" styleClass="w-full" />
+}
+
 @if (loading()) {
   <app-skeleton-table [rows]="6" />
 } @else if (bookings().length === 0) {
@@ -27,7 +31,9 @@
         <th>Qty</th>
         <th>Total</th>
         <th>Status</th>
+        <th>Email</th>
         <th>Booked</th>
+        <th>Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-b>
@@ -38,7 +44,27 @@
         <td>{{ b.quantity }}</td>
         <td class="revenue-cell">${{ b.totalAmount | number: '1.2-2' }}</td>
         <td><span class="status" [class.cancelled]="b.status === 'Cancelled'">{{ b.status }}</span></td>
+        <td>
+          <span
+            class="badge"
+            [class.badge-success]="b.emailStatus === 'Sent'"
+            [class.badge-warning]="b.emailStatus === 'Pending'"
+            [class.badge-danger]="b.emailStatus === 'Failed'"
+          >{{ b.emailStatus === 'Sent' ? 'Sent' : b.emailStatus === 'Failed' ? 'Failed' : 'Pending' }}</span>
+        </td>
         <td>{{ b.createdAt | date: 'short' }}</td>
+        <td class="actions-cell">
+          <p-button
+            [label]="resendingId() === b.bookingId ? 'Sending...' : 'Resend email'"
+            size="small"
+            severity="secondary"
+            [text]="true"
+            icon="pi pi-envelope"
+            [loading]="resendingId() === b.bookingId"
+            [disabled]="resendingId() !== null"
+            (click)="resendEmail(b)"
+          />
+        </td>
       </tr>
     </ng-template>
   </p-table>

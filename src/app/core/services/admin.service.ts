@@ -42,6 +42,10 @@ export class AdminService {
     return this.http.get<PagedResult<AdminBooking>>(`${API_BASE_URL}/admin/bookings`, { params });
   }
 
+  resendBookingEmail(bookingId: number): Observable<void> {
+    return this.http.post<void>(`${API_BASE_URL}/admin/bookings/${bookingId}/resend-email`, {});
+  }
+
   bookingTrend(days = 30): Observable<TrendPoint[]> {
     const params = new HttpParams().set('days', days);
     return this.http.get<TrendPoint[]>(`${API_BASE_URL}/admin/stats/trend`, { params });

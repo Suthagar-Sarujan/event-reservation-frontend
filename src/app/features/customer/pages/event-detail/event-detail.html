@@ -42,6 +42,8 @@
           Booking confirmed! Reference <strong>{{ c.reference }}</strong> - total ${{ c.total | number: '1.2-2' }}
           @if (c.paymentReference) { (payment {{ c.paymentReference }}) }.
           <a routerLink="/my-bookings">View my bookings &rarr;</a>
+          <br />
+          Check your email for your digital ticket.
         </span>
       </div>
     </section>

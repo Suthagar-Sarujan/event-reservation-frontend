@@ -23,4 +23,8 @@ export class BookingService {
   cancel(bookingId: number): Observable<void> {
     return this.http.post<void>(`${API_BASE_URL}/bookings/${bookingId}/cancel`, {});
   }
+
+  resendEmail(bookingId: number): Observable<void> {
+    return this.http.post<void>(`${API_BASE_URL}/bookings/${bookingId}/resend-email`, {});
+  }
 }

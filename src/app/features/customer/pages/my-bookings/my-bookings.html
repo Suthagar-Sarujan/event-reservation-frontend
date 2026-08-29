@@ -7,6 +7,9 @@
   @if (cancelError(); as err) {
     <p class="error-text"><i class="pi pi-exclamation-triangle"></i>{{ err }}</p>
   }
+  @if (resendError(); as err) {
+    <p class="error-text"><i class="pi pi-exclamation-triangle"></i>{{ err }}</p>
+  }
 
   @if (loading()) {
     <div class="booking-list">
@@ -35,7 +38,15 @@
         <div class="booking-card card card-hover">
           <div class="booking-top">
             <span class="ref"><i class="pi pi-ticket"></i>{{ b.bookingReference }}</span>
-            <span class="status" [class.cancelled]="b.status === 'Cancelled'">{{ b.status }}</span>
+            <span class="badges">
+              <span class="status" [class.cancelled]="b.status === 'Cancelled'">{{ b.status }}</span>
+              <span
+                class="badge"
+                [class.badge-success]="b.emailStatus === 'Sent'"
+                [class.badge-warning]="b.emailStatus === 'Pending'"
+                [class.badge-danger]="b.emailStatus === 'Failed'"
+              >{{ b.emailStatus === 'Sent' ? 'Email sent' : b.emailStatus === 'Failed' ? 'Email failed' : 'Email pending' }}</span>
+            </span>
           </div>
           <a class="booking-title-link" [routerLink]="['/events', b.eventId]"><h3>{{ b.eventName }}</h3></a>
           <div class="booking-meta">
@@ -51,6 +62,16 @@
 
           <div class="booking-actions">
             <a pButton size="small" severity="secondary" icon="pi pi-qrcode" label="View ticket" [routerLink]="['/bookings', b.bookingId, 'ticket']"></a>
+            <p-button
+              size="small"
+              severity="secondary"
+              [text]="true"
+              icon="pi pi-envelope"
+              [label]="resendingId() === b.bookingId ? 'Sending...' : resendSuccessId() === b.bookingId ? 'Email sent!' : 'Resend email'"
+              [loading]="resendingId() === b.bookingId"
+              [disabled]="resendingId() !== null"
+              (click)="resendEmail(b)"
+            />
             @if (canCancel(b)) {
               <p-button
                 size="small"

@@ -80,6 +80,8 @@ export interface Booking {
   items: BookingItem[];
   paymentReference: string | null;
   checkedInAt: string | null;
+  emailStatus: string;
+  emailSentAt: string | null;
 }
 
 export interface Ticket {
@@ -228,6 +230,8 @@ export interface OrganizerBooking {
   totalAmount: number;
   status: string;
   createdAt: string;
+  emailStatus: string;
+  emailSentAt: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -284,6 +288,8 @@ export interface AdminBooking {
   totalAmount: number;
   status: string;
   createdAt: string;
+  emailStatus: string;
+  emailSentAt: string | null;
 }
 
 export interface PagedResult<T> {

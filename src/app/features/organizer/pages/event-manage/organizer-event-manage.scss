@@ -64,6 +64,12 @@
   font-size: 0.85rem;
 }
 
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
 @media (max-width: 800px) {
   .two-col {
     grid-template-columns: 1fr;

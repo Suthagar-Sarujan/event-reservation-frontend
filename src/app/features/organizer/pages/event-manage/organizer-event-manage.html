@@ -110,6 +110,9 @@
   <div class="section-title">
     <h2>Bookings</h2>
   </div>
+  @if (resendError(); as err) {
+    <p class="error-text"><i class="pi pi-exclamation-triangle"></i>{{ err }}</p>
+  }
   @if (bookings().length === 0) {
     <app-empty-state icon="ticket" title="No bookings yet" description="Sales for this event will show up here as customers book tickets." />
   } @else {
@@ -122,7 +125,9 @@
             <th>Qty</th>
             <th>Total</th>
             <th>Status</th>
+            <th>Email</th>
             <th>Booked</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -133,7 +138,20 @@
               <td>{{ b.quantity }}</td>
               <td class="revenue-cell">${{ b.totalAmount | number: '1.2-2' }}</td>
               <td><span class="status" [class.cancelled]="b.status === 'Cancelled'">{{ b.status }}</span></td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge-success]="b.emailStatus === 'Sent'"
+                  [class.badge-warning]="b.emailStatus === 'Pending'"
+                  [class.badge-danger]="b.emailStatus === 'Failed'"
+                >{{ b.emailStatus === 'Sent' ? 'Sent' : b.emailStatus === 'Failed' ? 'Failed' : 'Pending' }}</span>
+              </td>
               <td>{{ b.createdAt | date: 'short' }}</td>
+              <td class="actions-cell">
+                <button class="btn btn-secondary btn-sm" (click)="resendEmail(b)" [disabled]="resendingId() === b.bookingId">
+                  {{ resendingId() === b.bookingId ? 'Sending...' : 'Resend email' }}
+                </button>
+              </td>
             </tr>
           }
         </tbody>
