@@ -57,6 +57,14 @@ export class AuthService {
     this.persist(null);
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${API_BASE_URL}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(`${API_BASE_URL}/auth/reset-password`, { token, newPassword });
+  }
+
   get token(): string | null {
     return this.authState()?.token ?? null;
   }

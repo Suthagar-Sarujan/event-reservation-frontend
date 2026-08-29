@@ -45,6 +45,21 @@
   margin: 0.6rem 0 0.75rem;
 }
 
+.forgot-link {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  font-size: 0.83rem;
+}
+
+.forgot-link a {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.forgot-link a:hover {
+  color: var(--text);
+}
+
 .switch-link {
   display: flex;
   flex-direction: column;

@@ -4,6 +4,8 @@ import { DashboardShell } from './shared/components/dashboard-shell/dashboard-sh
 import { Home } from './features/customer/pages/home/home';
 import { Login } from './features/auth/pages/login/login';
 import { Register } from './features/auth/pages/register/register';
+import { ForgotPassword } from './features/auth/pages/forgot-password/forgot-password';
+import { ResetPassword } from './features/auth/pages/reset-password/reset-password';
 import { EventDetailPage } from './features/customer/pages/event-detail/event-detail';
 import { MyBookings } from './features/customer/pages/my-bookings/my-bookings';
 import { Dashboard } from './features/customer/pages/dashboard/dashboard';
@@ -35,6 +37,8 @@ export const routes: Routes = [
       { path: '', component: Home },
       { path: 'login', component: Login },
       { path: 'register', component: Register },
+      { path: 'forgot-password', component: ForgotPassword },
+      { path: 'reset-password', component: ResetPassword },
       { path: 'events/:id', component: EventDetailPage },
     ],
   },
