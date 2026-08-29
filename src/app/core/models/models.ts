@@ -394,7 +394,7 @@ export interface GateScanResult {
 
 export interface GateScanHistoryEntry {
   scanId: number;
-  gateId: number;
+  gateId: number | null;
   gateName: string;
   scannedByUserId: number;
   scannedByName: string;
