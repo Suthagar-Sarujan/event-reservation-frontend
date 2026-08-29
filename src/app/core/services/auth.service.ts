@@ -17,6 +17,9 @@ export class AuthService {
   // admin has its own oversight tools (Admin > Events) for moderating any event.
   readonly isOrganizer = computed(() => this.authState()?.role === 'Organizer');
   readonly isAdmin = computed(() => this.authState()?.role === 'Admin');
+  // Gate staff scan tickets at their assigned gate(s) only - a separate,
+  // stripped-down mobile experience, not one of the DashboardShell panels.
+  readonly isGateUser = computed(() => this.authState()?.role === 'GateUser');
   // Organizer/Admin are back-office roles - they manage events, they don't
   // browse/book as a customer would. Browsing is for anonymous visitors and
   // customers only.

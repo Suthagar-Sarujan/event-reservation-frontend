@@ -338,3 +338,65 @@ export interface FraudOverview {
   totalAssessed: number;
   recent: RiskAssessment[];
 }
+
+// ---------------------------------------------------------------------------
+// Gate management
+// ---------------------------------------------------------------------------
+
+export interface Gate {
+  gateId: number;
+  name: string;
+  description: string | null;
+  status: 'Active' | 'Inactive';
+  assignedGateUserCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GateUserSummary {
+  userId: number;
+  fullName: string;
+  email: string;
+  gateIds: number[];
+}
+
+export interface GateDetail extends Gate {
+  assignedUsers: GateUserSummary[];
+}
+
+export type GateScanType = 'CheckIn' | 'CheckOut';
+
+export interface GateScanRequest {
+  gateId: number;
+  code: string;
+  eventId: number;
+  scanType: GateScanType;
+}
+
+// Always returned with HTTP 200 - a rejected scan is a normal response, not
+// an HTTP error, so the frontend branches purely on `success` (same
+// convention as VerifyTicketResult above).
+export interface GateScanResult {
+  success: boolean;
+  message: string;
+  bookingReference: string | null;
+  attendeeName: string | null;
+  eventName: string | null;
+  scannedAt: string | null;
+  totalQuantity: number | null;
+}
+
+export interface GateScanHistoryEntry {
+  scanId: number;
+  gateId: number;
+  gateName: string;
+  scannedByUserId: number;
+  scannedByName: string;
+  bookingId: number | null;
+  bookingReference: string | null;
+  eventName: string | null;
+  scanType: GateScanType;
+  status: 'Success' | 'Failed';
+  failureReason: string | null;
+  scannedAt: string;
+}

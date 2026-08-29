@@ -7,7 +7,7 @@ import { Register } from './features/auth/pages/register/register';
 import { EventDetailPage } from './features/customer/pages/event-detail/event-detail';
 import { MyBookings } from './features/customer/pages/my-bookings/my-bookings';
 import { Dashboard } from './features/customer/pages/dashboard/dashboard';
-import { customerGuard, organizerGuard, adminGuard } from './core/guards/role.guard';
+import { customerGuard, organizerGuard, adminGuard, gateUserGuard } from './core/guards/role.guard';
 import { OrganizerDashboard } from './features/organizer/pages/dashboard/organizer-dashboard';
 import { OrganizerEventForm } from './features/organizer/pages/event-form/organizer-event-form';
 import { OrganizerEventManage } from './features/organizer/pages/event-manage/organizer-event-manage';
@@ -20,6 +20,10 @@ import { OrganizerFraud } from './features/organizer/pages/fraud/organizer-fraud
 import { Onboarding } from './features/auth/pages/onboarding/onboarding';
 import { TicketView } from './features/customer/pages/ticket-view/ticket-view';
 import { OrganizerVerifyTicket } from './features/organizer/pages/verify/organizer-verify-ticket';
+import { AdminGates } from './features/admin/pages/gates/admin-gates';
+import { GateShell } from './shared/components/gate-shell/gate-shell';
+import { GateSelect } from './features/gate/pages/select/gate-select';
+import { GateScanner } from './features/gate/pages/scanner/gate-scanner';
 
 export const routes: Routes = [
   { path: 'onboarding', component: Onboarding, canActivate: [customerGuard] },
@@ -68,6 +72,16 @@ export const routes: Routes = [
       { path: 'events', component: AdminEvents },
       { path: 'bookings', component: AdminBookings },
       { path: 'fraud', component: AdminFraud },
+      { path: 'gates', component: AdminGates },
+    ],
+  },
+  {
+    path: 'gate',
+    component: GateShell,
+    canActivate: [gateUserGuard],
+    children: [
+      { path: '', component: GateSelect },
+      { path: 'scan', component: GateScanner },
     ],
   },
   { path: '**', redirectTo: '' },

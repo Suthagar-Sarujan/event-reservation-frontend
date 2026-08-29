@@ -1,0 +1,104 @@
+:host {
+  display: block;
+  max-width: 520px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.picker-header {
+  margin-bottom: 1.25rem;
+}
+
+.picker-header h1 {
+  font-size: 1.4rem;
+}
+
+.picker-header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.gate-confirm {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--primary-text);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+// Big touch targets - this screen is used on a phone/tablet, not a desktop,
+// so no hover-only affordances and generous padding throughout.
+.option-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 1.1rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+  min-height: 4.25rem;
+}
+
+.option-card:active {
+  background: var(--surface-hover);
+  transform: translateY(1px);
+}
+
+.option-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: var(--primary-tint);
+  color: var(--primary-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.option-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.option-title {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.option-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.option-chevron {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+:host ::ng-deep .change-link {
+  margin-top: 1.25rem;
+  width: 100%;
+  justify-content: center;
+}
+
+:host ::ng-deep .btn-block {
+  width: 100%;
+  margin-top: 0.75rem;
+}

@@ -1,0 +1,62 @@
+@if (step() === 'gate') {
+  <div class="picker-header">
+    <h1>Choose your gate</h1>
+    <p>Select the gate you're scanning tickets at.</p>
+  </div>
+
+  @if (gatesError(); as err) {
+    <p-message severity="error" [text]="err" styleClass="w-full" />
+    <p-button label="Retry" icon="pi pi-refresh" (click)="loadGates()" styleClass="btn-block" />
+  } @else if (loadingGates()) {
+    <app-skeleton-cards [count]="3" />
+  } @else if (gates().length === 0) {
+    <app-empty-state icon="map" title="No gates assigned" description="Ask an administrator to assign you to a gate before you can scan tickets." />
+  } @else {
+    <div class="option-list">
+      @for (g of gates(); track g.gateId) {
+        <button type="button" class="option-card" (click)="chooseGate(g)">
+          <span class="option-icon"><i class="pi pi-map-marker"></i></span>
+          <span class="option-body">
+            <span class="option-title">{{ g.name }}</span>
+            @if (g.description) {
+              <span class="option-subtitle">{{ g.description }}</span>
+            }
+          </span>
+          <i class="pi pi-chevron-right option-chevron"></i>
+        </button>
+      }
+    </div>
+  }
+}
+
+@if (step() === 'event') {
+  <div class="picker-header">
+    <p class="gate-confirm"><i class="pi pi-map-marker"></i> {{ gateSession.gateName() }}</p>
+    <h1>Choose the event</h1>
+    <p>Select the event you're checking attendees into.</p>
+  </div>
+
+  @if (eventsError(); as err) {
+    <p-message severity="error" [text]="err" styleClass="w-full" />
+    <p-button label="Retry" icon="pi pi-refresh" (click)="loadEvents()" styleClass="btn-block" />
+  } @else if (loadingEvents()) {
+    <app-skeleton-cards [count]="4" />
+  } @else if (events().length === 0) {
+    <app-empty-state icon="calendar" title="No events found" description="There are no events available to scan against right now." />
+  } @else {
+    <div class="option-list">
+      @for (e of events(); track e.eventId) {
+        <button type="button" class="option-card" (click)="chooseEvent(e)">
+          <span class="option-icon"><i class="pi pi-calendar"></i></span>
+          <span class="option-body">
+            <span class="option-title">{{ e.name }}</span>
+            <span class="option-subtitle">{{ e.datetimeUtc | date: 'MMM d, y, h:mm a' }} &middot; {{ e.venueName }}</span>
+          </span>
+          <i class="pi pi-chevron-right option-chevron"></i>
+        </button>
+      }
+    </div>
+  }
+
+  <p-button label="Change gate" icon="pi pi-arrow-left" [text]="true" (click)="changeGate()" styleClass="change-link" />
+}

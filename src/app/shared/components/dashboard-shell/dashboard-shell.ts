@@ -28,6 +28,7 @@ const ADMIN_NAV: NavItem[] = [
   { label: 'Events', path: '/admin/events', icon: 'pi-calendar' },
   { label: 'Bookings', path: '/admin/bookings', icon: 'pi-ticket' },
   { label: 'Fraud & Risk', path: '/admin/fraud', icon: 'pi-shield' },
+  { label: 'Gates', path: '/admin/gates', icon: 'pi-map' },
 ];
 
 const CUSTOMER_NAV: NavItem[] = [

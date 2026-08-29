@@ -22,9 +22,19 @@ export const adminGuard: CanActivateFn = () => {
   return false;
 };
 
-// Dashboard/My Bookings are the customer's own panel - Organizer and Admin have
-// their own dedicated sidebar panels instead, so they're redirected there rather
-// than shown a customer view that doesn't apply to them.
+export const gateUserGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  if (auth.isGateUser()) {
+    return true;
+  }
+  router.navigate(auth.isLoggedIn() ? ['/'] : ['/login']);
+  return false;
+};
+
+// Dashboard/My Bookings are the customer's own panel - Organizer, Admin, and
+// GateUser have their own dedicated panels instead, so they're redirected
+// there rather than shown a customer view that doesn't apply to them.
 export const customerGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
@@ -38,6 +48,10 @@ export const customerGuard: CanActivateFn = () => {
   }
   if (auth.isAdmin()) {
     router.navigate(['/admin']);
+    return false;
+  }
+  if (auth.isGateUser()) {
+    router.navigate(['/gate']);
     return false;
   }
   return true;
