@@ -29,6 +29,10 @@
     <p-button type="submit" [label]="loading() ? 'Signing in...' : 'Log in'" [loading]="loading()"
       [disabled]="form.invalid || loading()" [style]="{ width: '100%' }" icon="pi pi-arrow-right" iconPos="right" />
 
+    <p class="forgot-link">
+      <a routerLink="/forgot-password">Forgot Password?</a>
+    </p>
+
     <p class="switch-link">
       No account yet?
       <a routerLink="/register">Sign up <i class="pi pi-arrow-right"></i></a>
