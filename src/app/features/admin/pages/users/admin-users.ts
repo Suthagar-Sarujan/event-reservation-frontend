@@ -45,6 +45,7 @@ export class AdminUsers implements OnInit {
     { label: 'Customer', value: 'customer' },
     { label: 'Organizer', value: 'organizer' },
     { label: 'Admin', value: 'admin' },
+    { label: 'Gate User', value: 'gateuser' },
   ];
 
   constructor(
