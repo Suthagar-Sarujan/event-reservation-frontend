@@ -263,7 +263,7 @@
     <p-fluid class="add-user-form">
       <div class="form-field">
         <label>Add an existing gate-user account</label>
-        <p-select [(ngModel)]="selectedUserToAdd" [options]="availableUsersForAssign()" optionLabel="label" optionValue="value" placeholder="Select a user..." [showClear]="true" />
+        <p-select [(ngModel)]="selectedUserToAdd" [options]="availableUsersForAssign()" optionLabel="label" optionValue="value" placeholder="Select a user..." [showClear]="true" appendTo="body" />
       </div>
     </p-fluid>
     <p-button label="Add to gate" icon="pi pi-plus" [loading]="addingUser()" [disabled]="selectedUserToAdd === null || addingUser()" (click)="addUserToGate()" />
@@ -297,7 +297,7 @@
     </div>
     <div class="form-field">
       <label>Assigned gates</label>
-      <p-multiselect [(ngModel)]="newUserGateIds" [options]="gateOptions()" optionLabel="label" optionValue="value" placeholder="Select gates..." display="chip" />
+      <p-multiselect [(ngModel)]="newUserGateIds" [options]="gateOptions()" optionLabel="label" optionValue="value" placeholder="Select gates..." display="chip" appendTo="body" />
     </div>
   </p-fluid>
 
