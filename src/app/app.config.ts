@@ -6,13 +6,14 @@ import { providePrimeNG } from 'primeng/config';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { sessionExpiryInterceptor } from './core/interceptors/session-expiry.interceptor';
 import { AppThemePreset } from './prime-preset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, sessionExpiryInterceptor])),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {

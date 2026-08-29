@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -42,7 +42,12 @@ export class Login {
     private auth: AuthService,
     private theme: ThemeService,
     private router: Router,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    if (this.route.snapshot.queryParamMap.get('sessionExpired')) {
+      this.error.set('Your session has expired. Please log in again.');
+    }
+  }
 
   submit(): void {
     this.error.set(null);
