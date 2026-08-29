@@ -9,7 +9,7 @@ import { FluidModule } from 'primeng/fluid';
 import { AuthService } from '../../../../core/services/auth.service';
 import { AuthShell } from '../../../../shared/components/auth-shell/auth-shell';
 
-type ScreenState = 'form' | 'success' | 'invalid';
+type ScreenState = 'checking' | 'form' | 'success' | 'invalid';
 
 @Component({
   selector: 'app-reset-password',
@@ -19,7 +19,7 @@ type ScreenState = 'form' | 'success' | 'invalid';
   styleUrl: '../../auth-form.scss',
 })
 export class ResetPassword implements OnInit {
-  screenState = signal<ScreenState>('form');
+  screenState = signal<ScreenState>('checking');
   newPassword = '';
   confirmPassword = '';
   loading = signal(false);
@@ -38,7 +38,15 @@ export class ResetPassword implements OnInit {
     // there's nothing valid to submit against.
     if (!this.token) {
       this.screenState.set('invalid');
+      return;
     }
+    // A token IS present but may still be garbage/expired/already used -
+    // check it up front so a dead link shows "invalid" immediately instead
+    // of only after the visitor fills in and submits a new password.
+    this.auth.validateResetToken(this.token).subscribe({
+      next: () => this.screenState.set('form'),
+      error: () => this.screenState.set('invalid'),
+    });
   }
 
   get passwordsMismatch(): boolean {
