@@ -1,8 +1,7 @@
 <header class="topnav">
   <div class="container topnav-inner">
     <a class="brand" routerLink="/" (click)="closeMobile()">
-      <span class="brand-mark"><i class="pi pi-ticket"></i></span>
-      EventReserve
+      <img [src]="theme.effectiveTheme() === 'dark' ? '/logo-white.png' : '/logo-black.png'" alt="Eventify" class="brand-logo" />
     </a>
 
     <nav class="nav-center">
