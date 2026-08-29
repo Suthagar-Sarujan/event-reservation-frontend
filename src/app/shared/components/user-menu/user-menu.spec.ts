@@ -13,6 +13,7 @@ function seedAuth(role: string): void {
     email: 'jane@example.com',
     role,
     theme: 'light',
+    hasPreferences: true,
   };
   localStorage.setItem('event_reservation_auth', JSON.stringify(auth));
 }

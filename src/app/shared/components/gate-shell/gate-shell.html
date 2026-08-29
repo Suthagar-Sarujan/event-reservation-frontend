@@ -1,0 +1,18 @@
+<div class="gate-shell">
+  <header class="gate-topbar">
+    <div class="gate-topbar-title">
+      <span class="brand-mark"><i class="pi pi-ticket"></i></span>
+      <div>
+        <div class="gate-app-name">EventReserve</div>
+        @if (gateSession.gateName(); as gateName) {
+          <div class="gate-current">{{ gateName }}</div>
+        }
+      </div>
+    </div>
+    <p-button type="button" [text]="true" icon="pi pi-sign-out" (click)="logout()" ariaLabel="Log out" styleClass="gate-logout" />
+  </header>
+
+  <main class="gate-content">
+    <router-outlet />
+  </main>
+</div>

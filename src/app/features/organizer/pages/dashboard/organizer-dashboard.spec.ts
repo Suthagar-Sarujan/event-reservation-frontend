@@ -27,6 +27,14 @@ describe('OrganizerDashboard', () => {
       { eventId: 2, name: 'B', datetimeUtc: '2027-01-01T00:00:00Z', venueName: 'V', status: 'normal', listingCount: 1, ticketsSold: 3, ticketsRemaining: 10, revenue: 50, imageUrl: null },
     ]);
     httpMock.expectOne((r) => r.url === `${API_BASE_URL}/organizer/sales-trend`).flush([]);
+    httpMock.expectOne((r) => r.url === `${API_BASE_URL}/organizer/demand-predictions`).flush([]);
+    httpMock.expectOne((r) => r.url === `${API_BASE_URL}/organizer/demand-predictions/model-info`).flush({
+      version: null,
+      trainedAt: null,
+      trainingRowCount: 0,
+      mode: 'heuristic',
+      mae: null,
+    });
 
     expect(fixture.componentInstance).toBeTruthy();
     expect(fixture.componentInstance.loading()).toBe(false);
@@ -43,6 +51,14 @@ describe('OrganizerDashboard', () => {
       { eventId: 2, name: 'Rock Show', datetimeUtc: '2027-01-01T00:00:00Z', venueName: 'Arena', status: 'cancelled', listingCount: 1, ticketsSold: 3, ticketsRemaining: 10, revenue: 50, imageUrl: null },
     ]);
     httpMock.expectOne((r) => r.url === `${API_BASE_URL}/organizer/sales-trend`).flush([]);
+    httpMock.expectOne((r) => r.url === `${API_BASE_URL}/organizer/demand-predictions`).flush([]);
+    httpMock.expectOne((r) => r.url === `${API_BASE_URL}/organizer/demand-predictions/model-info`).flush({
+      version: null,
+      trainedAt: null,
+      trainingRowCount: 0,
+      mode: 'heuristic',
+      mae: null,
+    });
 
     const cmp = fixture.componentInstance;
     expect(cmp.filteredEvents().length).toBe(2);

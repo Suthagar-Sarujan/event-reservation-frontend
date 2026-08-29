@@ -1,0 +1,78 @@
+<div class="scanner-page">
+  <div class="scanner-header">
+    <h1>Scan tickets</h1>
+    <p class="scanner-context">
+      <span><i class="pi pi-map-marker"></i> {{ gateSession.gateName() }}</span>
+      <span><i class="pi pi-calendar"></i> {{ gateSession.eventName() }}</span>
+    </p>
+    <p-button label="Change gate / event" icon="pi pi-arrow-left" [text]="true" size="small" (click)="changeSelection()" />
+  </div>
+
+  <p-selectbutton
+    [ngModel]="scanMode()"
+    (ngModelChange)="scanMode.set($event)"
+    [options]="scanModeOptions"
+    optionLabel="label"
+    optionValue="value"
+    [allowEmpty]="false"
+    [disabled]="locked()"
+    styleClass="scan-mode-toggle"
+  />
+
+  <div class="camera-frame" [class.hidden]="!!cameraError()">
+    <video #videoElement class="camera-video" autoplay muted playsinline></video>
+    <div class="camera-frame-guide"></div>
+  </div>
+
+  @if (cameraError(); as err) {
+    <p-message severity="warn" [text]="err" styleClass="w-full" />
+  }
+
+  <div class="manual-entry">
+    <label for="manualCode">Enter code manually</label>
+    <div class="manual-entry-row">
+      <input
+        pInputText
+        id="manualCode"
+        type="text"
+        placeholder="Paste or type ticket code"
+        [(ngModel)]="manualCode"
+        name="manualCode"
+        autocomplete="off"
+        [disabled]="locked()"
+        (keyup.enter)="submitManual()"
+      />
+      <p-button label="Check" icon="pi pi-check" [loading]="submittingManual()" [disabled]="locked() || !manualCode.trim()" (click)="submitManual()" />
+    </div>
+  </div>
+
+  @if (result(); as r) {
+    <div class="scan-overlay" [class]="resultClass()">
+      <div class="scan-result-card">
+        <i class="pi" [ngClass]="r.success ? 'pi-check-circle' : 'pi-times-circle'"></i>
+        <h2>{{ r.message }}</h2>
+
+        @if (r.attendeeName || r.eventName || r.bookingReference) {
+          <div class="scan-details">
+            @if (r.attendeeName) {
+              <div class="scan-detail">{{ r.attendeeName }}</div>
+            }
+            @if (r.eventName) {
+              <div class="scan-detail">{{ r.eventName }}</div>
+            }
+            @if (r.bookingReference) {
+              <div class="scan-detail">
+                {{ r.bookingReference }}
+                @if (r.totalQuantity) {
+                  <span> &middot; {{ r.totalQuantity }} ticket(s)</span>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <p-button label="Scan next" icon="pi pi-qrcode" (click)="resumeScanning()" styleClass="scan-next-btn" />
+      </div>
+    </div>
+  }
+</div>

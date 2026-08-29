@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Login } from './login';
@@ -35,5 +35,28 @@ describe('Login', () => {
 
     expect(component.loading()).toBe(false);
     expect(component.error()).toBe('Invalid email or password.');
+  });
+
+  it('should redirect a GateUser straight to /gate instead of /dashboard', () => {
+    const fixture = TestBed.createComponent(Login);
+    const component = fixture.componentInstance;
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    component.email = 'gate.staff@example.com';
+    component.password = 'correct-password';
+    component.submit();
+
+    httpMock.expectOne(`${API_BASE_URL}/auth/login`).flush({
+      token: 'tok',
+      userId: 42,
+      fullName: 'Gate Staff',
+      email: 'gate.staff@example.com',
+      role: 'GateUser',
+      theme: 'light',
+      hasPreferences: true,
+    });
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/gate']);
   });
 });

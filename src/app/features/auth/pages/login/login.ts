@@ -56,6 +56,14 @@ export class Login {
       next: (response) => {
         this.loading.set(false);
         this.theme.adoptAccountPreference(response.theme);
+        // Gate staff have their own mobile scanning experience at /gate,
+        // which sits outside customerGuard's redirect chain (unlike
+        // Organizer/Admin, who land on /dashboard and get bounced from
+        // there), so it needs an explicit branch here.
+        if (response.role === 'GateUser') {
+          this.router.navigate(['/gate']);
+          return;
+        }
         // A customer who never completed the onboarding questionnaire (e.g.
         // skipped it, or registered before this existed) gets routed there
         // instead of straight to the dashboard.

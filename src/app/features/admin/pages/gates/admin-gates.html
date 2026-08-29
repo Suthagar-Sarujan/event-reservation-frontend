@@ -1,0 +1,312 @@
+<div class="page-header">
+  <div>
+    <h1>Gate management</h1>
+    <p>Create physical entry gates, staff gate-user accounts, assign them, and review scan history.</p>
+  </div>
+</div>
+
+<p-tabs [value]="activeTab()" (valueChange)="selectTab($event)">
+  <p-tablist>
+    <p-tab value="gates">Gates</p-tab>
+    <p-tab value="users">Gate Users</p-tab>
+    <p-tab value="history">Scan History</p-tab>
+  </p-tablist>
+
+  <p-tabpanels>
+    <!-- ================================================================= -->
+    <!-- Gates -->
+    <!-- ================================================================= -->
+    <p-tabpanel value="gates">
+      <div class="inline-form">
+        <p-iconfield>
+          <p-inputicon class="pi pi-search" />
+          <input pInputText type="search" placeholder="Search gates..." [(ngModel)]="gateSearch" (keyup.enter)="loadGates()" />
+        </p-iconfield>
+        <p-select
+          [ngModel]="gateStatusFilter()"
+          (ngModelChange)="gateStatusFilter.set($event); loadGates()"
+          [options]="statusFilterOptions"
+          optionLabel="label"
+          optionValue="value"
+        />
+        <p-button label="Search" severity="secondary" (click)="loadGates()" />
+        <p-button label="New Gate" icon="pi pi-plus" (click)="openCreateGate()" styleClass="ml-auto" />
+      </div>
+
+      @if (gatesError(); as err) {
+        <p-message severity="error" [text]="err" styleClass="w-full" />
+      }
+
+      @if (gatesLoading()) {
+        <app-skeleton-table [rows]="6" />
+      } @else if (gates().length === 0) {
+        <app-empty-state icon="map" title="No gates yet" description="Create a gate to start assigning gate-user staff to it." />
+      } @else {
+        <p-table [value]="gates()" dataKey="gateId" [rowHover]="true" styleClass="p-datatable-app">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Assigned users</th>
+              <th>Updated</th>
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-g>
+            <tr>
+              <td class="event-name">
+                {{ g.name }}
+                @if (g.description) {
+                  <div class="muted small">{{ g.description }}</div>
+                }
+              </td>
+              <td><span class="status" [class.cancelled]="g.status === 'Inactive'">{{ g.status }}</span></td>
+              <td>{{ g.assignedGateUserCount }}</td>
+              <td>{{ g.updatedAt | date: 'MMM d, y' }}</td>
+              <td class="actions-cell">
+                <p-button label="Edit" size="small" severity="secondary" icon="pi pi-pencil" (click)="openEditGate(g)" />
+                <p-button label="Assign users" size="small" severity="secondary" icon="pi pi-users" (click)="openAssignDialog(g)" />
+                <p-button
+                  [label]="togglingGateId() === g.gateId ? 'Working...' : (g.status === 'Active' ? 'Deactivate' : 'Activate')"
+                  size="small"
+                  [severity]="g.status === 'Active' ? 'warn' : 'success'"
+                  [text]="true"
+                  [disabled]="togglingGateId() === g.gateId"
+                  (click)="toggleGateStatus(g)"
+                />
+                <p-button
+                  [label]="deletingGateId() === g.gateId ? 'Deleting...' : 'Delete'"
+                  size="small"
+                  severity="danger"
+                  [text]="true"
+                  [disabled]="deletingGateId() === g.gateId"
+                  (click)="requestDeleteGate(g)"
+                />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </p-tabpanel>
+
+    <!-- ================================================================= -->
+    <!-- Gate Users -->
+    <!-- ================================================================= -->
+    <p-tabpanel value="users">
+      <div class="inline-form">
+        <p-iconfield>
+          <p-inputicon class="pi pi-search" />
+          <input pInputText type="search" placeholder="Search gate users..." [(ngModel)]="gateUserSearch" (keyup.enter)="loadGateUsers()" />
+        </p-iconfield>
+        <p-button label="Search" severity="secondary" (click)="loadGateUsers()" />
+        <p-button label="New Gate User" icon="pi pi-user-plus" (click)="openCreateUser()" styleClass="ml-auto" />
+      </div>
+
+      @if (gateUsersError(); as err) {
+        <p-message severity="error" [text]="err" styleClass="w-full" />
+      }
+
+      @if (gateUsersLoading()) {
+        <app-skeleton-table [rows]="6" />
+      } @else if (gateUsers().length === 0) {
+        <app-empty-state icon="users" title="No gate users yet" description="Create a gate-user account and assign it to one or more gates." />
+      } @else {
+        <p-table [value]="gateUsers()" dataKey="userId" [rowHover]="true" styleClass="p-datatable-app">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Assigned gates</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-u>
+            <tr>
+              <td class="event-name">{{ u.fullName }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ gateNamesFor(u) }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </p-tabpanel>
+
+    <!-- ================================================================= -->
+    <!-- Scan History -->
+    <!-- ================================================================= -->
+    <p-tabpanel value="history">
+      <div class="inline-form">
+        <p-select
+          [ngModel]="historyGateFilter()"
+          (ngModelChange)="historyGateFilter.set($event); loadHistory()"
+          [options]="historyGateOptions()"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="All gates"
+        />
+        <p-select
+          [ngModel]="historyStatusFilter()"
+          (ngModelChange)="historyStatusFilter.set($event); loadHistory()"
+          [options]="historyStatusOptions"
+          optionLabel="label"
+          optionValue="value"
+        />
+        <input pInputText type="date" [(ngModel)]="historyFromDate" (change)="loadHistory()" />
+        <span class="muted">to</span>
+        <input pInputText type="date" [(ngModel)]="historyToDate" (change)="loadHistory()" />
+        @if (historyGateFilter() || historyStatusFilter() || historyFromDate || historyToDate) {
+          <p-button label="Clear" severity="secondary" [text]="true" icon="pi pi-times" (click)="clearHistoryFilters()" />
+        }
+      </div>
+
+      @if (historyLoading()) {
+        <app-skeleton-table [rows]="6" />
+      } @else if (historyEntries().length === 0) {
+        <app-empty-state icon="history" title="No scans found" description="Try widening the date range or clearing filters." />
+      } @else {
+        <p-table [value]="historyEntries()" dataKey="scanId" [rowHover]="true" styleClass="p-datatable-app">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Gate</th>
+              <th>Staff</th>
+              <th>Type</th>
+              <th>Event</th>
+              <th>Booking</th>
+              <th>Status</th>
+              <th>Reason</th>
+              <th>Scanned at</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-h>
+            <tr>
+              <td>{{ h.gateName }}</td>
+              <td>{{ h.scannedByName }}</td>
+              <td>{{ h.scanType === 'CheckOut' ? 'Check-Out' : 'Check-In' }}</td>
+              <td>{{ h.eventName ?? '—' }}</td>
+              <td>{{ h.bookingReference ?? '—' }}</td>
+              <td><span class="status" [class.cancelled]="h.status === 'Failed'">{{ h.status }}</span></td>
+              <td>{{ h.failureReason ?? '—' }}</td>
+              <td>{{ h.scannedAt | date: 'MMM d, y, h:mm a' }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>
+
+<!-- ===================================================================== -->
+<!-- Create / edit gate -->
+<!-- ===================================================================== -->
+<p-dialog [visible]="gateDialogOpen()" (visibleChange)="!$event && closeGateDialog()" [modal]="true" [header]="gateDialogEditing() ? 'Edit gate' : 'New gate'" styleClass="edit-modal" [style]="{ width: '420px' }">
+  <p-fluid>
+    <div class="form-field">
+      <label>Name</label>
+      <input pInputText type="text" [(ngModel)]="gateFormName" name="gateFormName" placeholder="e.g. Gate A" />
+    </div>
+    <div class="form-field">
+      <label>Description (optional)</label>
+      <input pInputText type="text" [(ngModel)]="gateFormDescription" name="gateFormDescription" placeholder="e.g. Main entrance, north side" />
+    </div>
+  </p-fluid>
+
+  @if (gateFormError(); as err) {
+    <p-message severity="error" [text]="err" styleClass="w-full" />
+  }
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" severity="secondary" (click)="closeGateDialog()" />
+    <p-button label="Save" [loading]="savingGate()" (click)="saveGate()" [disabled]="savingGate()" />
+  </ng-template>
+</p-dialog>
+
+<app-confirm-dialog
+  [open]="pendingDeleteGate() !== null"
+  title="Delete this gate?"
+  [message]="'This will permanently delete &quot;' + (pendingDeleteGate()?.name ?? '') + '&quot;. Gates with scan history cannot be deleted - deactivate instead.'"
+  confirmLabel="Delete gate"
+  cancelLabel="Keep gate"
+  [danger]="true"
+  (confirmed)="confirmDeleteGate()"
+  (cancelled)="pendingDeleteGate.set(null)"
+/>
+
+<!-- ===================================================================== -->
+<!-- Assign users to a gate -->
+<!-- ===================================================================== -->
+<p-dialog [visible]="assignDialogGate() !== null" (visibleChange)="!$event && closeAssignDialog()" [modal]="true" [header]="'Assign users' + (assignDialogGate() ? ' - ' + assignDialogGate()!.name : '')" styleClass="edit-modal" [style]="{ width: '460px' }">
+  @if (assignDialogLoading()) {
+    <p class="muted">Loading...</p>
+  } @else if (assignDialogGate(); as detail) {
+    @if (detail.assignedUsers.length === 0) {
+      <p class="muted">No users assigned to this gate yet.</p>
+    } @else {
+      <ul class="assigned-user-list">
+        @for (u of detail.assignedUsers; track u.userId) {
+          <li>
+            <div>
+              <strong>{{ u.fullName }}</strong>
+              <div class="muted small">{{ u.email }}</div>
+            </div>
+            <p-button
+              [label]="removingUserId() === u.userId ? 'Removing...' : 'Remove'"
+              size="small"
+              severity="danger"
+              [text]="true"
+              [disabled]="removingUserId() === u.userId"
+              (click)="removeUserFromGate(u.userId)"
+            />
+          </li>
+        }
+      </ul>
+    }
+
+    <p-fluid class="add-user-form">
+      <div class="form-field">
+        <label>Add an existing gate-user account</label>
+        <p-select [(ngModel)]="selectedUserToAdd" [options]="availableUsersForAssign()" optionLabel="label" optionValue="value" placeholder="Select a user..." [showClear]="true" />
+      </div>
+    </p-fluid>
+    <p-button label="Add to gate" icon="pi pi-plus" [loading]="addingUser()" [disabled]="selectedUserToAdd === null || addingUser()" (click)="addUserToGate()" />
+
+    @if (assignError(); as err) {
+      <p-message severity="error" [text]="err" styleClass="w-full" />
+    }
+  }
+
+  <ng-template pTemplate="footer">
+    <p-button label="Close" severity="secondary" (click)="closeAssignDialog()" />
+  </ng-template>
+</p-dialog>
+
+<!-- ===================================================================== -->
+<!-- Create gate user -->
+<!-- ===================================================================== -->
+<p-dialog [visible]="userDialogOpen()" (visibleChange)="!$event && closeUserDialog()" [modal]="true" header="New gate user" styleClass="edit-modal" [style]="{ width: '440px' }">
+  <p-fluid>
+    <div class="form-field">
+      <label>Full name</label>
+      <input pInputText type="text" [(ngModel)]="newUserFullName" name="newUserFullName" />
+    </div>
+    <div class="form-field">
+      <label>Email</label>
+      <input pInputText type="email" [(ngModel)]="newUserEmail" name="newUserEmail" />
+    </div>
+    <div class="form-field">
+      <label>Password</label>
+      <p-password [(ngModel)]="newUserPassword" name="newUserPassword" [feedback]="false" [toggleMask]="true" />
+    </div>
+    <div class="form-field">
+      <label>Assigned gates</label>
+      <p-multiselect [(ngModel)]="newUserGateIds" [options]="gateOptions()" optionLabel="label" optionValue="value" placeholder="Select gates..." display="chip" />
+    </div>
+  </p-fluid>
+
+  @if (userFormError(); as err) {
+    <p-message severity="error" [text]="err" styleClass="w-full" />
+  }
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" severity="secondary" (click)="closeUserDialog()" />
+    <p-button label="Create" [loading]="savingUser()" (click)="saveUser()" [disabled]="savingUser()" />
+  </ng-template>
+</p-dialog>
