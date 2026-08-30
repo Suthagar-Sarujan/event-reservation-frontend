@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { MessageService } from 'primeng/api';
 import { Register } from './register';
 import { API_BASE_URL } from '../../../../core/api-config';
 
@@ -12,7 +13,7 @@ describe('Register', () => {
     localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [Register],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting(), MessageService],
     }).compileComponents();
     httpMock = TestBed.inject(HttpTestingController);
   });

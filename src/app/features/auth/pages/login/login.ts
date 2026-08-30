@@ -9,6 +9,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { MessageModule } from 'primeng/message';
 import { FluidModule } from 'primeng/fluid';
+import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ThemeService } from '../../../../core/services/theme.service';
 import { AuthShell } from '../../../../shared/components/auth-shell/auth-shell';
@@ -43,6 +44,7 @@ export class Login {
     private theme: ThemeService,
     private router: Router,
     private route: ActivatedRoute,
+    private messageService: MessageService,
   ) {
     if (this.route.snapshot.queryParamMap.get('sessionExpired')) {
       this.error.set('Your session has expired. Please log in again.');
@@ -55,6 +57,7 @@ export class Login {
     this.auth.login(this.email, this.password).subscribe({
       next: (response) => {
         this.loading.set(false);
+        this.messageService.add({ severity: 'success', summary: 'Login successful', detail: 'Welcome back!' });
         this.theme.adoptAccountPreference(response.theme);
         // Gate staff have their own mobile scanning experience at /gate,
         // which sits outside customerGuard's redirect chain (unlike
@@ -71,7 +74,9 @@ export class Login {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err.status === 401 ? 'Invalid email or password.' : 'Something went wrong. Please try again.');
+        const detail = err.status === 401 ? 'Invalid email or password.' : 'Something went wrong. Please try again.';
+        this.error.set(detail);
+        this.messageService.add({ severity: 'error', summary: 'Login failed', detail });
       },
     });
   }

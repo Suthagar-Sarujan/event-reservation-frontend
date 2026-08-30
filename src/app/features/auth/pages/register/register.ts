@@ -9,6 +9,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { MessageModule } from 'primeng/message';
 import { FluidModule } from 'primeng/fluid';
+import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ThemeService } from '../../../../core/services/theme.service';
 import { AuthShell } from '../../../../shared/components/auth-shell/auth-shell';
@@ -43,6 +44,7 @@ export class Register {
     private auth: AuthService,
     private theme: ThemeService,
     private router: Router,
+    private messageService: MessageService,
   ) {}
 
   submit(): void {
@@ -51,6 +53,11 @@ export class Register {
     this.auth.register(this.fullName, this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Account created',
+          detail: 'Your account has been created successfully.',
+        });
         // Brand-new account has no saved preference yet - carry over whatever
         // theme they'd already picked as an anonymous visitor instead of
         // resetting them to the server's just-created default.
@@ -62,9 +69,9 @@ export class Register {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(
-          err.status === 409 ? 'An account with this email already exists.' : 'Something went wrong. Please try again.',
-        );
+        const detail = err.status === 409 ? 'An account with this email already exists.' : 'Something went wrong. Please try again.';
+        this.error.set(detail);
+        this.messageService.add({ severity: 'error', summary: 'Registration failed', detail });
       },
     });
   }
