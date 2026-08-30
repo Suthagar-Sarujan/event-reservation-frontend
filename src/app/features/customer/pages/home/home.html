@@ -29,6 +29,37 @@
   }
 </section>
 
+@if (topInterest() && becauseYouLike().length) {
+  <section class="container">
+    <div class="section-title">
+      <h2>Because you like {{ topInterest() }}</h2>
+    </div>
+    <div class="card-grid">
+      @for (rec of becauseYouLike(); track rec.event.eventId) {
+        <app-event-card [event]="rec.event" [reason]="rec.reason" />
+      }
+    </div>
+  </section>
+}
+
+<section class="container">
+  <div class="section-title">
+    <div>
+      <h2>Popular / Trending Events</h2>
+      <p>Ranked by demand across all attendees</p>
+    </div>
+  </div>
+  @if (popularLoading()) {
+    <app-skeleton-cards [count]="4" />
+  } @else if (popular().length > 0) {
+    <div class="card-grid">
+      @for (rec of popular(); track rec.event.eventId) {
+        <app-event-card [event]="rec.event" [reason]="rec.reason" />
+      }
+    </div>
+  }
+</section>
+
 <section class="container">
   <div class="section-title">
     <h2>Browse events</h2>
